@@ -1,6 +1,9 @@
 private/*
 config.yaml
 
+notes.txt
+*.json
+
 *.log
 
 # coverage

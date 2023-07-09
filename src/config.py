@@ -5,6 +5,9 @@ from typing import Dict, Any
 # fmt: off
 class Settings(BaseSettings):
     environment: str
+    
+    google_client_id: str
+    google_api_key: str
 
     logging: Dict[str, Any] = {
         "version": 1,
