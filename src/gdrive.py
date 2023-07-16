@@ -41,13 +41,23 @@ class GDriveHandler:
         return results
     
 
+class GDriveContentParser:
+    
+    THUMBNAIL_BASE_URL = 'https://drive.google.com/thumbnail'
+    IMAGE_BASE_URL = 'https://drive.google.com/uc'
 
-
-# '{ROOT_FOLDER}' in parents and mimeType='image/jpeg'
-handler = GDriveHandler()
-results = handler.query_content(
-    query=f"'{ROOT_FOLDER}' in parents",    
-    fields=['id', 'name', 'mimeType']
-)
-print(results)
-
+    def parse(self, gdrive_content: Dict[Any, Any]):
+        content_objects = gdrive_content['files']
+        images = []
+        folders = []
+        for obj in content_objects:
+            if 'folder' in obj.pop('mimeType'):
+                folders.append(obj)
+            else:
+                images.append(obj)
+                obj['thumbnail_url'] = f"{self.THUMBNAIL_BASE_URL}?id={obj['id']}"
+                obj['image_url'] = f"{self.IMAGE_BASE_URL}?id={obj['id']}"
+        return {
+            'images': images,
+            'folders': folders 
+        }
