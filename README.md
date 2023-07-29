@@ -59,3 +59,10 @@ pytest ./src/
 ```sh
 ./scripts/run_checks.sh
 ```
+
+
+### Get token
+```sh
+python3 ./src/gcredentials.py
+```
+

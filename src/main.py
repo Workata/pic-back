@@ -3,7 +3,10 @@ from fastapi import FastAPI
 from .gdrive import GDriveHandler, GDriveContentParser
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.routers import categories
+
 app = FastAPI()
+app.include_router(categories.router)
 
 origins = [
     '*'
