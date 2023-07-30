@@ -13,13 +13,13 @@ query = Query()
 router = APIRouter(prefix="/api/categories", tags=["Categories"])
 
 
-@router.get("/")
+@router.get("")
 async def get_categories():
     categories = [row.get('category') for row in categories_db]
     return {"categories": categories}
 
 
-@router.post("/")
+@router.post("")
 async def create_category(category_name: str):
     is_duplicated = bool(categories_db.search(query.category == category_name))
     if is_duplicated:
