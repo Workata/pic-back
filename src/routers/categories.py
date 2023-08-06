@@ -1,6 +1,7 @@
 from tinydb import TinyDB, where, Query
 from fastapi import APIRouter, Depends
 from fastapi.responses import FileResponse
+from src.models import Category
 # from src.routers.auth import get_current_user
 
 
@@ -20,11 +21,11 @@ async def get_categories():
 
 
 @router.post("")
-async def create_category(category_name: str):
-    is_duplicated = bool(categories_db.search(query.category == category_name))
+async def create_category(category: Category):
+    is_duplicated = bool(categories_db.search(query.category == category.name))
     if is_duplicated:
         return {"info": "Category exists"}
-    categories_db.insert({"category": category_name})
+    categories_db.insert({"category": category.name})
     return {"info": "Category created"}
 
 
