@@ -3,10 +3,11 @@ from fastapi import FastAPI
 from .gdrive import GDriveHandler, GDriveContentParser
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routers import categories
+from src.routers import categories, image_map
 
 app = FastAPI()
 app.include_router(categories.router)
+app.include_router(image_map.router)
 
 origins = [
     '*'

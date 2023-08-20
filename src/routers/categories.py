@@ -13,6 +13,7 @@ query = Query()
 
 router = APIRouter(prefix="/api/categories", tags=["Categories"])
 
+# TODO make it restful
 
 @router.get("")
 async def get_categories():
