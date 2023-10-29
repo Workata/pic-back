@@ -6,6 +6,9 @@ from typing import Dict, Any
 class Settings(BaseSettings):
     environment: str
 
+    google_client_id: str
+    google_api_key: str
+
     logging: Dict[str, Any] = {
         "version": 1,
         "disable_existing_loggers": False,

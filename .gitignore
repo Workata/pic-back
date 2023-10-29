@@ -1,5 +1,9 @@
 private/*
 config.yaml
+dump
+
+notes.txt
+*.json
 
 *.log
 
