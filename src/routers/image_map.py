@@ -1,9 +1,8 @@
-from tinydb import TinyDB, where, Query
-from fastapi import APIRouter, Depends
-from fastapi.responses import FileResponse
+from tinydb import TinyDB, Query
+from fastapi import APIRouter
 from src.models import Marker
-# from src.routers.auth import get_current_user
 
+import typing as t
 
 
 IMG_MAP_MARKER_DB_PATH = "./data/database/image_map.json"
@@ -13,9 +12,8 @@ query = Query()
 router = APIRouter(prefix="/api/map", tags=["map"])
 
 
-
 @router.post("/marker")
-async def create_marker(marker: Marker):
+async def create_marker(marker: Marker) -> t.Dict[str, str]:
     # TODO check duplicates by lon/lat
     # is_duplicated = bool(categories_db.search(query.category == category.name))
     # if is_duplicated:
@@ -25,5 +23,5 @@ async def create_marker(marker: Marker):
 
 
 @router.get("/marker")
-async def get_markers():
+async def get_markers() -> t.Any:  # t.List[Document]:
     return img_map_marker_db.all()

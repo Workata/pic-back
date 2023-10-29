@@ -1,8 +1,7 @@
-from tinydb import TinyDB, where, Query
-from fastapi import APIRouter, Depends
-from fastapi.responses import FileResponse
+from tinydb import TinyDB, Query
+from fastapi import APIRouter
 from src.models import Category
-# from src.routers.auth import get_current_user
+import typing as t
 
 
 IMG_CATEGORIES_DB_PATH = "./data/database/image_categories.json"
@@ -15,14 +14,15 @@ router = APIRouter(prefix="/api/categories", tags=["Categories"])
 
 # TODO make it restful
 
+
 @router.get("")
-async def get_categories():
-    categories = [row.get('category') for row in categories_db]
+async def get_categories() -> t.Dict[str, t.Any]:
+    categories = [row.get("category") for row in categories_db]
     return {"categories": categories}
 
 
 @router.post("")
-async def create_category(category: Category):
+async def create_category(category: Category) -> t.Dict[str, str]:
     is_duplicated = bool(categories_db.search(query.category == category.name))
     if is_duplicated:
         return {"info": "Category exists"}
@@ -30,12 +30,8 @@ async def create_category(category: Category):
     return {"info": "Category created"}
 
 
-
-
 @router.get("/{img_id}")
-async def get_image_categories(img_id: str):
+async def get_image_categories(img_id: str) -> t.Dict[t.Any, t.Any]:
     categories = img_categories_db.search(query.id.search(img_id))
     print(categories)
     return {}
-
-
