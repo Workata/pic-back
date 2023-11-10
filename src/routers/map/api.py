@@ -23,5 +23,5 @@ async def create_marker(marker: Marker) -> t.Dict[str, str]:
 
 
 @router.get("/marker")
-async def get_markers() -> t.Any:  # t.List[Document]:
+async def get_all_markers() -> t.Any:  # t.List[Document]:
     return img_map_marker_db.all()
