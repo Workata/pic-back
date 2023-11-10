@@ -12,13 +12,13 @@ router = APIRouter(prefix="/api/v1/categories", tags=["categories"])
 
 
 @router.get("")
-async def get_categories() -> JSONResponse:
+async def get_all_categories() -> JSONResponse:
     categories_coll = collection_provider.provide("categories")
     return JSONResponse(content=categories_coll.all(), status_code=status.HTTP_200_OK)
 
 
 @router.post("")
-async def create_category(new_category: Category) -> JSONResponse:
+async def create_new_category(new_category: Category) -> JSONResponse:
     categories = collection_provider.provide("categories")
     is_duplicated = bool(categories.search(query.name == new_category.name))
     if is_duplicated:

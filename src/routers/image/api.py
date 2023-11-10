@@ -36,8 +36,15 @@ async def get_image(img_id: str) -> JSONResponse:
     return JSONResponse(content=image, status_code=status.HTTP_200_OK)
 
 
+@router.get("/category/{category_name}")
+async def get_images_from_category(category_name: str) -> JSONResponse:
+    images_coll = collection_provider.provide("images")
+    images = images_coll.search(query.categories.any(query.name == category_name))
+    return JSONResponse(content=images, status_code=status.HTTP_200_OK)
+
+
 @router.get("/{img_id}/categories")
-async def get_image_categories(img_id: str) -> JSONResponse:
+async def get_categories_of_image(img_id: str) -> JSONResponse:
     images_coll = collection_provider.provide("images")
     image: Dict[str, Any] = images_coll.get(query.id == img_id)
     if not image:
