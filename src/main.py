@@ -1,14 +1,14 @@
 from fastapi import FastAPI
-
-from .gdrive import GDriveHandler, GDriveContentParser
 from fastapi.middleware.cors import CORSMiddleware
-import typing as t
 
-from src.routers import categories, image_map
+from .routers import category_router, map_router, gdrive_router, image_router
+
 
 app = FastAPI()
-app.include_router(categories.router)
-app.include_router(image_map.router)
+app.include_router(category_router)
+app.include_router(map_router)
+app.include_router(gdrive_router)
+app.include_router(image_router)
 
 origins = ["*"]
 
@@ -21,10 +21,15 @@ app.add_middleware(
 )
 
 
-@app.get("/api/folder/{folder_url_id}")
-def read_root(folder_url_id: str) -> t.Any:
-    handler = GDriveHandler()
-    res = handler.query_content(query=f"'{folder_url_id}' in parents", fields=["id", "name", "mimeType"])
-    parser = GDriveContentParser()
-    parsed_res = parser.parse(res)
-    return parsed_res
+# * https://github.com/Itz-fork/Fastapi-Swagger-UI-Dark
+# TODO make it work
+# from fastapi.openapi.docs import get_swagger_ui_html
+# from starlette.responses import HTMLResponse
+# @app.get("/docs", include_in_schema=False)
+# async def custom_swagger_ui_html_cdn() -> HTMLResponse:
+#     return get_swagger_ui_html(
+#     openapi_url=app.openapi_url,
+#     title=f"{app.title} - Swagger UI",
+#     # swagger_ui_dark.css CDN link
+#     swagger_css_url="https://cdn.jsdelivr.net/gh/Itz-fork/Fastapi-Swagger-UI-Dark/assets/swagger_ui_dark.min.css"
+# )
