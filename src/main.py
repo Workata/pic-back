@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import category_router, map_router, gdrive_router, image_router
+from .routers import category_router, map_router, gdrive_router, image_router, auth_router
 
 
 app = FastAPI()
@@ -9,6 +9,7 @@ app.include_router(category_router)
 app.include_router(map_router)
 app.include_router(gdrive_router)
 app.include_router(image_router)
+app.include_router(auth_router)
 
 origins = ["*"]
 

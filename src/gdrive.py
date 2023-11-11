@@ -5,6 +5,7 @@ from pathlib import Path
 import typing as t
 
 
+# * needed only for testing, normally it should be on frontend only
 ROOT_FOLDER = "1Q3AAZ7wW-I7vG0ONIW_o0vWnHEJv8Ckm"
 
 # thumbnail (without admin):
