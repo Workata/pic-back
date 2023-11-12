@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Optional, Any
+from typing import Optional
 
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -16,7 +16,7 @@ settings = get_settings()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> Any:
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
     users_coll = collection_provider.provide("users")
     try:
         payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
@@ -28,7 +28,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> Any:
     user = users_coll.get(where("username") == username)
     if not user:
         raise credentials_exception
-    return user["username"]
+    return user["username"]  # type: ignore [no-any-return]
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
