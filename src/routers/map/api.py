@@ -9,7 +9,7 @@ IMG_MAP_MARKER_DB_PATH = "./data/database/image_map.json"
 img_map_marker_db = TinyDB(IMG_MAP_MARKER_DB_PATH)
 query = Query()
 
-router = APIRouter(prefix="/api/map", tags=["map"])
+router = APIRouter(prefix="/api/v1/map", tags=["map"])
 
 
 @router.post("/marker")
@@ -23,5 +23,5 @@ async def create_marker(marker: Marker) -> t.Dict[str, str]:
 
 
 @router.get("/marker")
-async def get_markers() -> t.Any:  # t.List[Document]:
+async def get_all_markers() -> t.Any:  # t.List[Document]:
     return img_map_marker_db.all()

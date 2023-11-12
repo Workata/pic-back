@@ -2,12 +2,15 @@ from pydantic import BaseSettings
 from typing import Dict, Any
 
 
-# fmt: off
 class Settings(BaseSettings):
     environment: str
 
     google_client_id: str
     google_api_key: str
+
+    access_token_lifetime_minutes: int
+    jwt_secret_key: str
+    jwt_algorithm: str
 
     logging: Dict[str, Any] = {
         "version": 1,
@@ -23,15 +26,8 @@ class Settings(BaseSettings):
             },
         },
         "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
-                "formatter": "simple"
-            },
-            "file": {
-                "class": "logging.FileHandler",
-                "filename": "./logs/all.log",
-                "formatter": "verbose"
-            },
+            "console": {"class": "logging.StreamHandler", "formatter": "simple"},
+            "file": {"class": "logging.FileHandler", "filename": "./logs/all.log", "formatter": "verbose"},
         },
         "loggers": {
             "general": {
@@ -44,8 +40,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
-# fmt: on
 
 
 def get_settings() -> Settings:
-    return Settings()
+    return Settings()  # type: ignore [call-arg]
