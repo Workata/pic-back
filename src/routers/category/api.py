@@ -30,5 +30,5 @@ async def create_new_category(new_category: Category) -> JSONResponse:
     categories.insert(new_category.dict())
     return JSONResponse(
         content={"info": f"Category {new_category.name} has been created successfuly."},
-        status_code=status.HTTP_201_CREATED
+        status_code=status.HTTP_201_CREATED,
     )

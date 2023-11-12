@@ -26,22 +26,15 @@ class Settings(BaseSettings):
             },
         },
         "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
-                "formatter": "simple"
-            },
-            "file": {
-                "class": "logging.FileHandler",
-                "filename": "./logs/all.log",
-                "formatter": "verbose"
-            },
+            "console": {"class": "logging.StreamHandler", "formatter": "simple"},
+            "file": {"class": "logging.FileHandler", "filename": "./logs/all.log", "formatter": "verbose"},
         },
         "loggers": {
             "general": {
                 "handlers": ["console", "file"],
                 "level": "INFO",
             }
-        }
+        },
     }
 
     class Config:
@@ -50,4 +43,4 @@ class Settings(BaseSettings):
 
 
 def get_settings() -> Settings:
-    return Settings()
+    return Settings()  # type: ignore [call-arg]
