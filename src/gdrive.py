@@ -51,7 +51,7 @@ class GDriveContentParser:
             if "folder" in obj.pop("mimeType"):
                 folders.append(obj)
             else:
-                obj["thumbnail_url"] = f"{self.THUMBNAIL_BASE_URL}?id={obj['id']}"
+                obj["thumbnail_url"] = f"{self.THUMBNAIL_BASE_URL}?id={obj['id']}&authuser=0"
                 obj["image_url"] = f"{self.IMAGE_BASE_URL}?id={obj['id']}"
                 obj["name"] = Path(obj["name"]).stem  # remove extension
                 images.append(obj)
