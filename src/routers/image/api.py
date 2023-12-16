@@ -8,6 +8,7 @@ from tinydb.table import Document
 from src.db import CollectionProvider
 from src.models import Image, ResponseMessage, Category
 from src.serializers import CommentInputSerializer
+from src.services import GDriveImageUrlGenerator
 
 collection_provider = CollectionProvider()
 query = Query()
@@ -46,20 +47,17 @@ async def get_image(img_id: str) -> JSONResponse:
 async def get_images_from_category(category_name: str) -> JSONResponse:
     """
     Select category and get images belonging to this category
-    Res: [{id, name, image_url, thumbnail_url}]
+    Res: [{id, name, comment, image_url, thumbnail_url}]
     """
-    THUMBNAIL_BASE_URL = "https://drive.google.com/thumbnail"
-    IMAGE_BASE_URL = "https://drive.google.com/uc"
-
     images_coll = collection_provider.provide("images")
     images = images_coll.search(query.categories.any(query.name == category_name))
-    # TODO refactor URL creator service (image/thumbnail), remove code duplication (gservice)
     formatted_images = [
         {
             "id": img["id"],
             "name": img["name"],
-            "thumbnail_url": f"{THUMBNAIL_BASE_URL}?id={img['id']}&authuser=0",
-            "image_url": f"{IMAGE_BASE_URL}?id={img['id']}",
+            "comment": img["comment"],
+            "thumbnail_url": GDriveImageUrlGenerator.generate_thumbnail_img_url(img['id']),
+            "image_url": GDriveImageUrlGenerator.generate_standard_img_url(img['id'])
         }
         for img in images
     ]

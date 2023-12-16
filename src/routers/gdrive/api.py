@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 import typing as t
-from src.gdrive import GDriveHandler, GDriveContentParser
+from src.services.gdrive import GDriveHandler, GDriveContentParser
 
 
 router = APIRouter(prefix="/api/v1/gdrive", tags=["gdrive"])
