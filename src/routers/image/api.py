@@ -8,7 +8,6 @@ from tinydb.table import Document
 from src.db import CollectionProvider
 from src.models import Image, ResponseMessage, Category
 from src.serializers import CommentInputSerializer
-from src.services import GDriveImageUrlGenerator
 
 collection_provider = CollectionProvider()
 query = Query()
@@ -41,27 +40,6 @@ async def get_image(img_id: str) -> JSONResponse:
             status_code=status.HTTP_404_NOT_FOUND,
         )
     return JSONResponse(content=image, status_code=status.HTTP_200_OK)
-
-
-@router.get("/category/{category_name}", response_model=Any)
-async def get_images_from_category(category_name: str) -> JSONResponse:
-    """
-    Select category and get images belonging to this category
-    Res: [{id, name, comment, image_url, thumbnail_url}]
-    """
-    images_coll = collection_provider.provide("images")
-    images = images_coll.search(query.categories.any(query.name == category_name))
-    formatted_images = [
-        {
-            "id": img["id"],
-            "name": img["name"],
-            "comment": img["comment"],
-            "thumbnail_url": GDriveImageUrlGenerator.generate_thumbnail_img_url(img['id']),
-            "image_url": GDriveImageUrlGenerator.generate_standard_img_url(img['id'])
-        }
-        for img in images
-    ]
-    return JSONResponse(content=formatted_images, status_code=status.HTTP_200_OK)
 
 
 @router.get("/{img_id}/categories", response_model=List[Category])

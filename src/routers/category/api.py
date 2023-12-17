@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
@@ -6,6 +6,7 @@ from tinydb import Query
 
 from src.models import Category
 from src.db import CollectionProvider
+from src.services import GDriveImageUrlGenerator
 
 
 collection_provider = CollectionProvider()
@@ -17,6 +18,27 @@ router = APIRouter(prefix="/api/v1/categories", tags=["categories"])
 async def get_all_categories() -> JSONResponse:
     categories_coll = collection_provider.provide("categories")
     return JSONResponse(content=categories_coll.all(), status_code=status.HTTP_200_OK)
+
+
+@router.get("/{category_name}", response_model=Any)
+async def get_images_from_category(category_name: str) -> JSONResponse:
+    """
+    Select category and get images belonging to this category
+    Res: [{id, name, comment, image_url, thumbnail_url}]
+    """
+    images_coll = collection_provider.provide("images")
+    images = images_coll.search(query.categories.any(query.name == category_name))
+    formatted_images = [
+        {
+            "id": img["id"],
+            "name": img["name"],
+            "comment": img["comment"],
+            "thumbnail_url": GDriveImageUrlGenerator.generate_thumbnail_img_url(img['id']),
+            "image_url": GDriveImageUrlGenerator.generate_standard_img_url(img['id'])
+        }
+        for img in images
+    ]
+    return JSONResponse(content=formatted_images, status_code=status.HTTP_200_OK)
 
 
 @router.post("")
