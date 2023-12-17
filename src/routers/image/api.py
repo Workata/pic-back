@@ -1,4 +1,4 @@
-from typing import List, Optional, Any
+from typing import List, Optional
 
 from fastapi import APIRouter, status, HTTPException
 from fastapi.responses import JSONResponse
@@ -40,30 +40,6 @@ async def get_image(img_id: str) -> JSONResponse:
             status_code=status.HTTP_404_NOT_FOUND,
         )
     return JSONResponse(content=image, status_code=status.HTTP_200_OK)
-
-
-@router.get("/category/{category_name}", response_model=Any)
-async def get_images_from_category(category_name: str) -> JSONResponse:
-    """
-    Select category and get images belonging to this category
-    Res: [{id, name, image_url, thumbnail_url}]
-    """
-    THUMBNAIL_BASE_URL = "https://drive.google.com/thumbnail"
-    IMAGE_BASE_URL = "https://drive.google.com/uc"
-
-    images_coll = collection_provider.provide("images")
-    images = images_coll.search(query.categories.any(query.name == category_name))
-    # TODO refactor URL creator service (image/thumbnail), remove code duplication (gservice)
-    formatted_images = [
-        {
-            "id": img["id"],
-            "name": img["name"],
-            "thumbnail_url": f"{THUMBNAIL_BASE_URL}?id={img['id']}&authuser=0",
-            "image_url": f"{IMAGE_BASE_URL}?id={img['id']}",
-        }
-        for img in images
-    ]
-    return JSONResponse(content=formatted_images, status_code=status.HTTP_200_OK)
 
 
 @router.get("/{img_id}/categories", response_model=List[Category])

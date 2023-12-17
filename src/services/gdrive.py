@@ -1,25 +1,13 @@
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
+import typing as t
 from pathlib import Path
 
-import typing as t
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from tinydb import Query
 
+from src.db import CollectionProvider
 
-# * needed only for testing, normally it should be on frontend only
-ROOT_FOLDER = "1Q3AAZ7wW-I7vG0ONIW_o0vWnHEJv8Ckm"
-
-# thumbnail (without admin):
-# https://drive.google.com/thumbnail?id=1nHP3SRWm1gWTK5BG_009Bie4oJ-_MFYp
-
-# full pic (without admin):
-# <img src="https://drive.google.com/uc?id=FILEID" />
-
-# high res:
-# 1Q3AAZ7wW-I7vG0ONIW_o0vWnHEJv8Ckm
-
-# USE ID FROM REQUEST (NOT FROM URL!!!)
-# thumb
-# https://drive.google.com/thumbnail?id=1F6WlnanzKcvP1cyAlHu5dBne61BuhWk_
+from . import GDriveImageUrlGenerator
 
 
 class GDriveHandler:
@@ -40,8 +28,8 @@ class GDriveHandler:
 
 
 class GDriveContentParser:
-    THUMBNAIL_BASE_URL = "https://drive.google.com/thumbnail"
-    IMAGE_BASE_URL = "https://drive.google.com/uc"
+    def __init__(self) -> None:
+        self._images_collection = CollectionProvider().provide("images")
 
     def parse(self, gdrive_content: t.Dict[t.Any, t.Any]) -> t.Dict[str, t.Any]:
         content_objects = gdrive_content["files"]
@@ -51,8 +39,14 @@ class GDriveContentParser:
             if "folder" in obj.pop("mimeType"):
                 folders.append(obj)
             else:
-                obj["thumbnail_url"] = f"{self.THUMBNAIL_BASE_URL}?id={obj['id']}&authuser=0"
-                obj["image_url"] = f"{self.IMAGE_BASE_URL}?id={obj['id']}"
-                obj["name"] = Path(obj["name"]).stem  # remove extension
+                img_id: str = obj["id"]
+                obj["thumbnail_url"] = GDriveImageUrlGenerator.generate_thumbnail_img_url(img_id)
+                obj["image_url"] = GDriveImageUrlGenerator.generate_standard_img_url(img_id)
+                obj["name"] = Path(obj["name"]).stem  # remove file extension
+                obj["comment"] = self._get_comment(img_id)
                 images.append(obj)
         return {"images": images, "folders": folders}
+
+    def _get_comment(self, img_id: str) -> str:
+        img = self._images_collection.get(Query().id == img_id)
+        return img["comment"] if img is not None else ""  # type: ignore
