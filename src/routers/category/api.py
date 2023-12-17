@@ -33,8 +33,8 @@ async def get_images_from_category(category_name: str) -> JSONResponse:
             "id": img["id"],
             "name": img["name"],
             "comment": img["comment"],
-            "thumbnail_url": GDriveImageUrlGenerator.generate_thumbnail_img_url(img['id']),
-            "image_url": GDriveImageUrlGenerator.generate_standard_img_url(img['id'])
+            "thumbnail_url": GDriveImageUrlGenerator.generate_thumbnail_img_url(img["id"]),
+            "image_url": GDriveImageUrlGenerator.generate_standard_img_url(img["id"]),
         }
         for img in images
     ]

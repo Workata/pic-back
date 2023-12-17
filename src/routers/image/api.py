@@ -1,4 +1,4 @@
-from typing import List, Optional, Any
+from typing import List, Optional
 
 from fastapi import APIRouter, status, HTTPException
 from fastapi.responses import JSONResponse

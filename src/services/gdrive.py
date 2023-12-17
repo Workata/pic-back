@@ -39,16 +39,14 @@ class GDriveContentParser:
             if "folder" in obj.pop("mimeType"):
                 folders.append(obj)
             else:
-                img_id: str = obj['id']
+                img_id: str = obj["id"]
                 obj["thumbnail_url"] = GDriveImageUrlGenerator.generate_thumbnail_img_url(img_id)
                 obj["image_url"] = GDriveImageUrlGenerator.generate_standard_img_url(img_id)
-                obj["name"] = Path(obj["name"]).stem  # remove extension
+                obj["name"] = Path(obj["name"]).stem  # remove file extension
                 obj["comment"] = self._get_comment(img_id)
                 images.append(obj)
         return {"images": images, "folders": folders}
-    
+
     def _get_comment(self, img_id: str) -> str:
-       img = self._images_collection.get(Query().id == img_id)
-       if not img:
-           return ''
-       return img['comment']#
+        img = self._images_collection.get(Query().id == img_id)
+        return img["comment"] if img is not None else ""  # type: ignore
