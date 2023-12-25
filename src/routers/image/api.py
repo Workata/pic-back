@@ -1,13 +1,14 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from tinydb import Query
 from tinydb.table import Document
 
 from src.db import CollectionProvider
-from src.models import Image, ResponseMessage, Category
+from src.models import Image, ResponseMessage, Category, AuthenticatedUser
 from src.serializers import CommentInputSerializer
+from src.routers.auth.utils import get_current_user
 
 collection_provider = CollectionProvider()
 query = Query()
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/api/v1/images", tags=["images"])
 
 
 @router.post("", response_model=Image)
-async def create_image(new_img: Image) -> JSONResponse:
+async def create_image(new_img: Image, user: AuthenticatedUser = Depends(get_current_user)) -> JSONResponse:
     """Create new image"""
     images_coll = collection_provider.provide("images")
 
@@ -56,7 +57,9 @@ async def get_categories_of_image(img_id: str) -> JSONResponse:
 
 
 @router.patch("/{img_id}/categories", response_model=ResponseMessage)
-async def update_image_categories(img_id: str, categories: List[str]) -> JSONResponse:
+async def update_image_categories(
+    img_id: str, categories: List[str], user: AuthenticatedUser = Depends(get_current_user)
+) -> JSONResponse:
     images_coll = collection_provider.provide("images")
     categories_coll = collection_provider.provide("categories")
     found_categories = categories_coll.search(query.name.one_of(categories))
@@ -76,7 +79,9 @@ async def update_image_categories(img_id: str, categories: List[str]) -> JSONRes
 
 
 @router.patch("/{img_id}/comment", response_model=ResponseMessage)
-async def update_image_comment(img_id: str, comment: CommentInputSerializer) -> JSONResponse:
+async def update_image_comment(
+    img_id: str, comment: CommentInputSerializer, user: AuthenticatedUser = Depends(get_current_user)
+) -> JSONResponse:
     comment_value: str = comment.comment  # TODO refactor this
     images_coll = collection_provider.provide("images")
 

@@ -1,12 +1,13 @@
 from typing import List, Any
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from fastapi.responses import JSONResponse
 from tinydb import Query
 
-from src.models import Category
+from src.models import Category, AuthenticatedUser
 from src.db import CollectionProvider
 from src.services import GDriveImageUrlGenerator
+from src.routers.auth.utils import get_current_user
 
 
 collection_provider = CollectionProvider()
@@ -42,7 +43,9 @@ async def get_images_from_category(category_name: str) -> JSONResponse:
 
 
 @router.post("")
-async def create_new_category(new_category: Category) -> JSONResponse:
+async def create_new_category(
+    new_category: Category, user: AuthenticatedUser = Depends(get_current_user)
+) -> JSONResponse:
     categories = collection_provider.provide("categories")
     if bool(categories.search(query.name == new_category.name)):
         return JSONResponse(
@@ -51,6 +54,6 @@ async def create_new_category(new_category: Category) -> JSONResponse:
         )
     categories.insert(new_category.dict())
     return JSONResponse(
-        content={"info": f"Category {new_category.name} has been created successfuly."},
+        content={"info": f"Category '{new_category.name}' has been created successfuly."},
         status_code=status.HTTP_201_CREATED,
     )

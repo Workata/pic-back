@@ -8,6 +8,7 @@ from tinydb import where
 
 from src.db import CollectionProvider
 from src.settings import get_settings
+from src.models import AuthenticatedUser
 
 from .exceptions import credentials_exception
 
@@ -16,7 +17,7 @@ settings = get_settings()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> AuthenticatedUser:
     users_coll = collection_provider.provide("users")
     try:
         payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
@@ -28,7 +29,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
     user = users_coll.get(where("username") == username)
     if not user:
         raise credentials_exception
-    return user["username"]  # type: ignore [no-any-return]
+    return AuthenticatedUser(username=user["username"])
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
