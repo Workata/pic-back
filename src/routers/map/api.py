@@ -19,11 +19,11 @@ async def create_marker(marker: Marker, user: AuthenticatedUser = Depends(get_cu
     # TODO check duplicates by lon/lat
     # is_duplicated = bool(categories_db.search(query.category == category.name))
     # if is_duplicated:
-    #     return {"info": "Category exists"}
+    #     return {"detail": "Category exists"}
     img_map_marker_db.insert({"latitude": marker.latitude, "longitude": marker.longitude, "url": marker.url})
     return JSONResponse(
         content={
-            "info": f"Marker created for (lat: {marker.latitude}, lon: {marker.longitude}) with url: {marker.url}"
+            "detail": f"Marker created for (lat: {marker.latitude}, lon: {marker.longitude}) with url: {marker.url}"
         },
         status_code=status.HTTP_200_OK,
     )
