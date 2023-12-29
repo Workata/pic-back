@@ -32,6 +32,11 @@ async def get_images_from_category(category_name: str) -> JSONResponse:
     TODO create response model
     """
     images_coll = collection_provider.provide("images")
+    categories_coll = collection_provider.provide("categories")
+
+    if not categories_coll.get(query.name == category_name):
+        raise CategoryNotFound(name=category_name)
+
     images = images_coll.search(query.categories.any(query.name == category_name))
     formatted_images = [
         {
@@ -49,7 +54,7 @@ async def get_images_from_category(category_name: str) -> JSONResponse:
 @router.post("")
 async def create_category(new_category: Category, user: AuthenticatedUser = Depends(get_current_user)) -> JSONResponse:
     categories = collection_provider.provide("categories")
-    if bool(categories.search(query.name == new_category.name)):
+    if categories.get(query.name == new_category.name):
         raise CategoryExists(name=new_category.name)
     categories.insert(new_category.dict())
     return JSONResponse(
