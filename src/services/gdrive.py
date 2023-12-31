@@ -21,7 +21,9 @@ class GDriveHandler:
         fields_str = ", ".join(fields)
         results = (
             self.service.files()
-            .list(q=query, spaces=spaces, fields=f"nextPageToken, files({fields_str})", pageSize=page_size)
+            .list(
+                q=query, spaces=spaces, fields=f"nextPageToken, files({fields_str})", pageSize=page_size, orderBy="name"
+            )
             .execute()
         )
         return results

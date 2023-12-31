@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from passlib.hash import bcrypt
@@ -10,6 +10,7 @@ from src.db import CollectionProvider
 from src.settings import get_settings
 
 from .utils import create_access_token
+from .exceptions import WrongCredentials
 
 settings = get_settings()
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
@@ -21,19 +22,8 @@ async def generate_token(form_data: OAuth2PasswordRequestForm = Depends()) -> JS
     users_coll = collection_provider.provide("users")
     user = users_coll.get(where("username") == form_data.username)
 
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password!",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    if not bcrypt.verify(form_data.password, user["hashed_password"]):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password!",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    if not user or not bcrypt.verify(form_data.password, user["hashed_password"]):
+        raise WrongCredentials()
 
     access_token = create_access_token(
         data={"username": user["username"]}, expires_delta=timedelta(minutes=settings.access_token_lifetime_minutes)
