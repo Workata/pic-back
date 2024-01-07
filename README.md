@@ -19,3 +19,10 @@ coords (6 decimal)
 ```
 43.213671
 ```
+
+Dockerize
+```
+docker build . --tag pic-back-image
+docker run pic-back-image
+docker-compose up
+```

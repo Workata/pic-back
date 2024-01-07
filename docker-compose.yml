@@ -1,0 +1,13 @@
+version: "3.8"
+
+services: 
+  pic-back:
+    container_name: pic-back-container
+    restart: always
+    build: ./
+    env_file:
+      - .env
+    ports: 
+      - "8000:8000"
+    volumes:
+      - "./data:/data"
