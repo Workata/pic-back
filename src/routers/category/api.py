@@ -63,22 +63,20 @@ async def create_category(new_category: Category, user: AuthenticatedUser = Depe
     )
 
 
-@router.delete("")
-async def delete_category(
-    category_to_delete: Category, user: AuthenticatedUser = Depends(get_current_user)
-) -> Response:
+@router.delete("/{category_name}")
+async def delete_category(category_name: str, user: AuthenticatedUser = Depends(get_current_user)) -> Response:
     """
     Delete category from 'categories' collection
     and then delete it from every image that contains this category ('images' collection)
     """
     categories_coll = collection_provider.provide("categories")
-    removed_categories: Optional[Document] = categories_coll.remove(query.name == category_to_delete.name)
+    removed_categories: Optional[Document] = categories_coll.remove(query.name == category_name)
     if not removed_categories:
-        raise CategoryNotFound(name=category_to_delete.name)
+        raise CategoryNotFound(name=category_name)
     images_coll = collection_provider.provide("images")
-    images = images_coll.search(query.categories.any(query.name == category_to_delete.name))
+    images = images_coll.search(query.categories.any(query.name == category_name))
     for image in images:
-        updated_categories = list(filter(lambda item: item["name"] != category_to_delete.name, image["categories"]))
+        updated_categories = list(filter(lambda item: item["name"] != category_name, image["categories"]))
         images_coll.update({"categories": updated_categories}, doc_ids=[image.doc_id])
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
