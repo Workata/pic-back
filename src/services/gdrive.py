@@ -17,16 +17,28 @@ class GDriveHandler:
         creds = Credentials.from_authorized_user_file("token.json", self.SCOPES)
         self.service = build("drive", "v3", credentials=creds)
 
-    def query_content(self, query: str, fields: t.List[str], spaces: str = "drive", page_size: int = 10) -> t.Any:
+    def query_content(
+            self,
+            query: str,
+            fields: t.List[str],
+            page_token: t.Optional[str],
+            page_size: int, spaces: str = "drive"
+    ) -> t.Any:
         fields_str = ", ".join(fields)
-        results = (
-            self.service.files()
-            .list(
-                q=query, spaces=spaces, fields=f"nextPageToken, files({fields_str})", pageSize=page_size, orderBy="name"
-            )
-            .execute()
-        )
-        return results
+        if page_token:
+            return self.service.files().list(
+                q=query, spaces=spaces,
+                fields=f"nextPageToken, files({fields_str})",
+                pageToken=page_token,
+                pageSize=page_size,
+                orderBy="name"
+            ).execute()
+        return self.service.files().list(
+                q=query, spaces=spaces,
+                fields=f"nextPageToken, files({fields_str})",
+                pageSize=page_size,
+                orderBy="name"
+            ).execute()
 
 
 class GDriveContentParser:
@@ -34,6 +46,7 @@ class GDriveContentParser:
         self._images_collection = CollectionProvider().provide("images")
 
     def parse(self, gdrive_content: t.Dict[t.Any, t.Any]) -> t.Dict[str, t.Any]:
+        # print(gdrive_content)
         content_objects = gdrive_content["files"]
         images = []
         folders = []
@@ -47,7 +60,8 @@ class GDriveContentParser:
                 obj["name"] = Path(obj["name"]).stem  # remove file extension
                 obj["comment"] = self._get_comment(img_id)
                 images.append(obj)
-        return {"images": images, "folders": folders}
+        next_page_token = gdrive_content.get("nextPageToken", None)
+        return {"images": images, "folders": folders, "nextPageToken": next_page_token}
 
     def _get_comment(self, img_id: str) -> str:
         img = self._images_collection.get(Query().id == img_id)
