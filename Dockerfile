@@ -1,9 +1,9 @@
 FROM python:3.12.1-alpine3.19
 
 # * install needed libs
-COPY requirements/base.txt requirements/base.txt
+COPY requirements/ requirements/
 RUN pip install --upgrade pip
-RUN pip3 install -r requirements/base.txt
+RUN pip3 install -r requirements/prod.txt
 
 COPY ./src ./src
 EXPOSE 8000
