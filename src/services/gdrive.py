@@ -14,31 +14,33 @@ class GDriveHandler:
     SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
 
     def __init__(self) -> None:
-        creds = Credentials.from_authorized_user_file("token.json", self.SCOPES)
+        creds = Credentials.from_authorized_user_file("./data/token.json", self.SCOPES)
         self.service = build("drive", "v3", credentials=creds)
 
     def query_content(
-            self,
-            query: str,
-            fields: t.List[str],
-            page_token: t.Optional[str],
-            page_size: int, spaces: str = "drive"
+        self, query: str, fields: t.List[str], page_token: t.Optional[str], page_size: int, spaces: str = "drive"
     ) -> t.Any:
         fields_str = ", ".join(fields)
         if page_token:
-            return self.service.files().list(
-                q=query, spaces=spaces,
-                fields=f"nextPageToken, files({fields_str})",
-                pageToken=page_token,
-                pageSize=page_size,
-                orderBy="name"
-            ).execute()
-        return self.service.files().list(
-                q=query, spaces=spaces,
-                fields=f"nextPageToken, files({fields_str})",
-                pageSize=page_size,
-                orderBy="name"
-            ).execute()
+            return (
+                self.service.files()
+                .list(
+                    q=query,
+                    spaces=spaces,
+                    fields=f"nextPageToken, files({fields_str})",
+                    pageToken=page_token,
+                    pageSize=page_size,
+                    orderBy="name",
+                )
+                .execute()
+            )
+        return (
+            self.service.files()
+            .list(
+                q=query, spaces=spaces, fields=f"nextPageToken, files({fields_str})", pageSize=page_size, orderBy="name"
+            )
+            .execute()
+        )
 
 
 class GDriveContentParser:
