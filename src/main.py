@@ -13,10 +13,14 @@ settings = get_settings()
 app = FastAPI()
 
 # * https://pyngrok.readthedocs.io/en/latest/integrations.html#fastapi
-if settings.use_ngrok and os.environ.get("NGROK_AUTHTOKEN"):
+if settings.environment == "prod" and settings.use_ngrok and os.environ.get("NGROK_AUTHTOKEN"):
     print("Using ngrok tunneling...")
     # pyngrok should only ever be installed or initialized in a dev environment when this flag is set
-    from pyngrok import ngrok
+    from pyngrok import ngrok, conf
+
+    # * https://ngrok.com/docs/network-edge/#points-of-presence
+    # * https://pyngrok.readthedocs.io/en/latest/#setting-the-region
+    conf.get_default().region = "eu"
 
     # Get the dev server port (defaults to 8000 for Uvicorn, can be overridden with `--port`
     # when starting the server
