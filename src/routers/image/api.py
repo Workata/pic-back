@@ -9,7 +9,7 @@ from src.db import CollectionProvider
 from src.models import Image, ResponseMessage, Category, AuthenticatedUser
 from src.serializers import CommentInputSerializer
 from src.routers.auth.utils import get_current_user
-from .exceptions import ImageNotFound, ImageExists
+from .exceptions import ImageNotFound
 
 collection_provider = CollectionProvider()
 query = Query()
