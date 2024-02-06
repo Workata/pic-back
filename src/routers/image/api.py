@@ -16,21 +16,8 @@ query = Query()
 router = APIRouter(prefix="/api/v1/images", tags=["images"])
 
 
-@router.post("", response_model=Image)
-async def create_image(new_img: Image, user: AuthenticatedUser = Depends(get_current_user)) -> JSONResponse:
-    images_coll = collection_provider.provide("images")
-
-    image: Optional[Document] = images_coll.get(query.id == new_img.id)
-    if image:
-        raise ImageExists(new_img.id)
-
-    new_img_dict = new_img.dict()
-    images_coll.insert(new_img_dict)
-    return JSONResponse(content=new_img_dict, status_code=status.HTTP_201_CREATED)
-
-
 @router.get("/{img_id}", response_model=Image)
-async def get_image(img_id: str) -> JSONResponse:
+async def get_image_metadadata(img_id: str) -> JSONResponse:
     images_coll = collection_provider.provide("images")
 
     image: Optional[Document] = images_coll.get(query.id == img_id)
@@ -38,6 +25,20 @@ async def get_image(img_id: str) -> JSONResponse:
         raise ImageNotFound(img_id)
 
     return JSONResponse(content=image, status_code=status.HTTP_200_OK)
+
+
+@router.post("", response_model=Image)
+async def get_or_create_image_metadadata(
+    image_data: Image, user: AuthenticatedUser = Depends(get_current_user)
+) -> JSONResponse:
+    images_coll = collection_provider.provide("images")
+
+    image: Optional[Document] = images_coll.get(query.id == image_data.id)
+    if image:
+        return JSONResponse(content=image, status_code=status.HTTP_200_OK)
+    new_img_dict = image_data.dict()
+    images_coll.insert(new_img_dict)
+    return JSONResponse(content=new_img_dict, status_code=status.HTTP_201_CREATED)
 
 
 @router.get("/{img_id}/categories", response_model=List[Category])

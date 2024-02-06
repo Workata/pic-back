@@ -6,5 +6,5 @@ from typing import List
 class Image(BaseModel):
     id: str
     name: str
-    categories: List[Category]
+    categories: List[Category] = Field(default=[])
     comment: str = Field(default="")
