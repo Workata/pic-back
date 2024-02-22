@@ -1,8 +1,8 @@
 version: "3.8"
 
 services: 
-  pic-back:
-    container_name: pic-back-container
+  fastapi:
+    container_name: fastapi
     restart: always
     build: ./
     env_file:
@@ -11,3 +11,26 @@ services:
       - "8000:8000"
     volumes:
       - "./data:/data"
+
+  caddy:
+    container_name: caddy
+    restart: unless-stopped
+    build:
+      context: ./src/caddy
+      dockerfile: ./Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./data/caddy_data:/data
+      - ./data/caddy_config:/config
+    depends_on:
+      - fastapi
+    environment:
+      PROXY_BACKEND: fastapi
+      PROXY_PORT: 8000
+      DOMAIN: ${DOMAIN}
+
+volumes:
+  caddy_data:
+  caddy_config:

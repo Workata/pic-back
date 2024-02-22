@@ -2,6 +2,11 @@ private/*
 config.yaml
 dump
 
+# container volume files
+data/*
+!data/.gitkeep
+!data/database/.gitkeep
+
 notes.txt
 *.json
 
