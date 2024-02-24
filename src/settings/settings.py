@@ -1,5 +1,6 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from typing import Dict, Any
+from functools import lru_cache
 
 
 class Settings(BaseSettings):
@@ -11,9 +12,6 @@ class Settings(BaseSettings):
     access_token_lifetime_minutes: int
     jwt_secret_key: str
     jwt_algorithm: str
-
-    base_url: str = "http://localhost:8000"
-    use_ngrok: bool = False
 
     logging: Dict[str, Any] = {
         "version": 1,
@@ -45,5 +43,6 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
 
 
+@lru_cache
 def get_settings() -> Settings:
     return Settings()  # type: ignore [call-arg]
