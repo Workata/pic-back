@@ -7,7 +7,13 @@ router = APIRouter(prefix="/api/v1/gdrive", tags=["gdrive"])
 
 
 @router.get("/folder/{folder_url_id}")
-def read_root(folder_url_id: str, page_size: int = 30, page_token: t.Optional[str] = None) -> t.Any:
+def read_root(folder_url_id: str, page_size: int = 25, page_token: t.Optional[str] = None) -> t.Any:
+    """
+    TODO ANALAYZE
+    if page size is more than 25 there seems to be a problem
+    with loading pics in viewer on frontend site
+    e.g.: click on 29th pic
+    """
     handler = GDriveHandler()
     res = handler.query_content(
         query=f"'{folder_url_id}' in parents",
