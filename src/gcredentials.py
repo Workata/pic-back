@@ -8,7 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from src.settings import get_settings
+from settings import get_settings
 
 settings = get_settings()
 

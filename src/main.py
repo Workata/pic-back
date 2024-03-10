@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routers import category_router, map_router, gdrive_router, image_router, auth_router
-from src.settings import get_settings
+from routers import category_router, map_router, gdrive_router, image_router, auth_router
+from settings import get_settings
 
 
 settings = get_settings()

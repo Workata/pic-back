@@ -1,4 +1,4 @@
-class GDriveImageUrlGenerator:
+class GoogleDriveImageUrlGenerator:
     """
     base img: https://lh3.google.com/u/0/d/{img-ID}
     thumbnail img: https://lh3.googleusercontent.com/d/{img-ID}=s220?authuser=0
@@ -9,9 +9,9 @@ class GDriveImageUrlGenerator:
     """
 
     STANDARD_IMAGE_BASE_URL = "https://drive.google.com/uc"
-    STANDARD_IMAGE_BASE_URL_V2 = "https://lh3.google.com/u/0/d"
-
     THUMBNAIL_IMG_BASE_URL = "https://drive.google.com/thumbnail"
+
+    STANDARD_IMAGE_BASE_URL_V2 = "https://lh3.google.com/u/0/d"
     THUMBNAIL_IMG_BASE_URL_V2 = "https://lh3.googleusercontent.com/d"
 
     @classmethod
