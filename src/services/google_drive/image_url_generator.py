@@ -15,8 +15,11 @@ class GoogleDriveImageUrlGenerator:
     THUMBNAIL_IMG_BASE_URL_V2 = "https://lh3.googleusercontent.com/d"
 
     @classmethod
+    def generate_standard_img_url_v1(cls, image_id: str) -> str:
+        return f"{cls.STANDARD_IMAGE_BASE_URL}?id={image_id}"
+
+    @classmethod
     def generate_standard_img_url(cls, image_id: str) -> str:
-        # return f"{cls.STANDARD_IMAGE_BASE_URL}?id={image_id}"
         return f"{cls.STANDARD_IMAGE_BASE_URL_V2}/{image_id}"
 
     @classmethod

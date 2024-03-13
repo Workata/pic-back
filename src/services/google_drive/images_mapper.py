@@ -59,7 +59,7 @@ class GoogleDriveImagesMapper:
             self.map_image(folder_id, img_id)
 
     def map_image(self, folder_id: str, img_id: str) -> None:
-        img_url = GoogleDriveImageUrlGenerator.generate_standard_img_url(img_id)
+        img_url = GoogleDriveImageUrlGenerator.generate_standard_img_url_v1(img_id)
         coords = self._coords_getter.get_coords(img_url)
         if not coords:
             return None
@@ -68,5 +68,5 @@ class GoogleDriveImagesMapper:
         query = Query()
         self._markers_collection.upsert(
             new_marker.model_dump(),
-            query.coords.latitude == coords.latitude & query.coords.longitude == coords.longitude,
+            (query.coords.latitude == coords.latitude) & (query.coords.longitude == coords.longitude),
         )
