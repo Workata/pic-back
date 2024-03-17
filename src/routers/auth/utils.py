@@ -6,9 +6,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from tinydb import where
 
-from src.db import CollectionProvider
-from src.settings import get_settings
-from src.models import AuthenticatedUser
+from db import CollectionProvider
+from settings import get_settings
+from models import AuthenticatedUser
 
 from .exceptions import WrongCredentials
 

@@ -1,2 +1,3 @@
-echo "Running: uvicorn src.main:app --reload --port=8000 ..."
-uvicorn src.main:app --reload --port=8000
+echo "Running: uvicorn main:app --reload --port=8000 ..."
+cd src
+uvicorn main:app --reload --port=8000

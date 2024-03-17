@@ -6,8 +6,8 @@
 """
 from passlib.hash import bcrypt
 
-from src.db import CollectionProvider
-from src.models import User
+from db import CollectionProvider
+from models import User
 
 
 collection_provider = CollectionProvider()

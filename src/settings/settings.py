@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     jwt_secret_key: str
     jwt_algorithm: str
 
+    base_url: str = "http://localhost:8000"
+
     logging: Dict[str, Any] = {
         "version": 1,
         "disable_existing_loggers": False,
