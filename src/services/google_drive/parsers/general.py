@@ -22,7 +22,7 @@ class GoogleDriveGeneralDataParser:
             else:
                 img_id: str = obj["id"]
                 obj["thumbnail_url"] = GoogleDriveImageUrlGenerator.generate_thumbnail_img_url(img_id)
-                obj["image_url"] = GoogleDriveImageUrlGenerator.generate_standard_img_url(img_id)
+                obj["image_url"] = GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(img_id)
                 obj["name"] = Path(obj["name"]).stem  # remove file extension
                 obj["comment"] = self._get_comment(img_id)
                 images.append(obj)
