@@ -40,8 +40,11 @@ async def get_all_markers() -> JSONResponse:
     return JSONResponse(content=markers_coll.all(), status_code=status.HTTP_200_OK)
 
 
-@router.get("/folder/{folder_id}")
-async def map_folder(folder_id: str) -> JSONResponse:
+@router.post("/folder/{folder_id}")
+async def map_folder(folder_id: str, user: AuthenticatedUser = Depends(get_current_user)) -> JSONResponse:
     mapper = GoogleDriveImagesMapperFactory.create()
     mapper.map_folder(folder_id)
-    return JSONResponse(content={"info": "folder mapped"}, status_code=status.HTTP_201_CREATED)
+    return JSONResponse(
+        content={"info": "Folder will be mapped in the background!"},
+        status_code=status.HTTP_201_CREATED
+    )

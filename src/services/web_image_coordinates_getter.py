@@ -10,11 +10,16 @@ from models import Coords
 class WebImageCoordinatesGetter:
     """
     Doesnt work with thumbnail images
+    TODO add logger
     """
 
     def get_coords(self, img_url: str) -> t.Optional[Coords]:
         img = self._get_img(img_url)
-        return self._get_image_coordinates(img)
+        coords = self._get_image_coordinates(img)
+        if coords is None or (coords.latitude == 0.0 and coords.longitude == 0.0):
+            # ! when latitude and longitude is (0.0, 0.0) then most likely something wrong during coords extraction
+            return None
+        return coords
 
     def _get_img(self, img_url: str) -> Image:
         res = requests.get(img_url)

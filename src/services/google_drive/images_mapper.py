@@ -58,7 +58,7 @@ class GoogleDriveImagesMapper:
 
         img_ids = self._data_parser.parse(data)
         for img_id in img_ids:
-            self.map_image(folder_id, img_id)
+            self.map_image(folder_id=folder_id, img_id=img_id, page_token=page_token)
 
         if next_page_token := data.get("nextPageToken", None):
             self.map_folder(folder_id=folder_id, page_token=next_page_token)
