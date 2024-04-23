@@ -1,6 +1,6 @@
-from src.services.backups.backup_maker import BackupMaker
-from src.services.backups.zipper import Zipper
-from src.services.backups.file_uploader import FileUploader
+from services.backups.backup_maker import BackupMaker
+from services.backups.zipper import Zipper
+from services.backups.file_uploader import FileUploader
 
 
 class BackupMakerFactory:

@@ -7,10 +7,7 @@ from fastapi_restful.tasks import repeat_every
 
 from routers import category_router, map_router, gdrive_router, image_router, auth_router
 from settings import get_settings
-from src.routers import (auth_router, category_router, gdrive_router,
-                         image_router, map_router)
-from src.settings import get_settings
-from src.services.backups import BackupMakerFactory
+from services.backups import BackupMakerFactory
 
 
 @asynccontextmanager
@@ -46,7 +43,10 @@ app.add_middleware(
 
 backup_maker = BackupMakerFactory.create()
 
+
 @repeat_every(seconds=60 * 60 * 24)
 async def backup_task() -> None:
-    print("Backup...")
+    if settings.environment == "dev":
+        print("Backup omitted - dev env")
+        return
     backup_maker.make()
