@@ -11,3 +11,5 @@ passlib==1.7.4
 python-multipart==0.0.9
 exif==1.6.0
 requests==2.31.0
+fastapi-restful==0.5.0
+typing-inspect==0.9.0

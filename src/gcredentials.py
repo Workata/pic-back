@@ -15,7 +15,7 @@ settings = get_settings()
 print(settings.google_api_key)
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly", "https://www.googleapis.com/auth/drive.file"]
 
 ROOT_FOLDER = "1Q3AAZ7wW-I7vG0ONIW_o0vWnHEJv8Ckm"
 
@@ -24,6 +24,11 @@ query:
 mimeType='image/jpeg'
 '{ROOT_FOLDER}' in parents
 """
+
+# import webbrowser
+# urL='https://www.google.com'
+# chrome_path="C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+# webbrowser.register('chrome', None,webbrowser.BackgroundBrowser(chrome_path))
 
 
 def main() -> None:
