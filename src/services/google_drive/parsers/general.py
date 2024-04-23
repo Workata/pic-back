@@ -5,7 +5,7 @@ from tinydb import Query
 
 from db import CollectionProvider
 
-from services.google_drive.image_url_generator import GoogleDriveImageUrlGenerator
+from services.image_url_generator import GoogleDriveImageUrlGenerator
 
 
 class GoogleDriveGeneralDataParser:

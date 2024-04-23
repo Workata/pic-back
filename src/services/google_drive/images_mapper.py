@@ -4,9 +4,9 @@ from tinydb import Query, TinyDB
 
 from db import CollectionProvider
 from models import Coords, Marker
+from settings import get_settings
 
-from ..image_url_generator import ImageUrlGenerator
-from .image_url_generator import GoogleDriveImageUrlGenerator
+from services.image_url_generator import TomtolImageUrlGenerator, GoogleDriveImageUrlGenerator
 
 
 class WebImageCoordinatesGetterInterface(t.Protocol):
@@ -46,24 +46,29 @@ class GoogleDriveImagesMapper:
         self._data_parser = data_parser
         self._coords_getter = coords_getter
         self._markers_collection = collection_provider.provide("markers")
+        self._settings = get_settings()
 
-    def map_folder(self, folder_id: str, page_size: int = 50) -> None:
-        res = self._data_fetcher.query_content(
+    def map_folder(self, folder_id: str, page_token: t.Optional[str] = None) -> None:
+        data = self._data_fetcher.query_content(
             query=f"'{folder_id}' in parents",
             fields=["id", "name", "mimeType"],
-            page_size=page_size,
-            page_token=None,
+            page_size=self._settings.images_page_size,
+            page_token=page_token,
         )
-        img_ids = self._data_parser.parse(res)
+
+        img_ids = self._data_parser.parse(data)
         for img_id in img_ids:
             self.map_image(folder_id, img_id)
 
-    def map_image(self, folder_id: str, img_id: str) -> None:
+        if next_page_token := data.get("nextPageToken", None):
+            self.map_folder(folder_id=folder_id, page_token=next_page_token)
+
+    def map_image(self, folder_id: str, img_id: str, page_token: t.Optional[str] = None) -> None:
         img_url = GoogleDriveImageUrlGenerator.generate_standard_img_url_v1(img_id)
         coords = self._coords_getter.get_coords(img_url)
         if not coords:
             return None
-        url = ImageUrlGenerator.generate(folder_id, img_id)
+        url = TomtolImageUrlGenerator.generate(folder_id=folder_id, img_id=img_id, page_token=page_token)
         new_marker = Marker(coords=coords, url=url)
         query = Query()
         self._markers_collection.upsert(

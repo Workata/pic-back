@@ -13,7 +13,8 @@ class Settings(BaseSettings):
     jwt_secret_key: str
     jwt_algorithm: str
 
-    base_url: str
+    frontend_base_url: str
+    images_page_size: int
 
     logging: Dict[str, Any] = {
         "version": 1,

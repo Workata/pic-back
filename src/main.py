@@ -7,7 +7,7 @@ from fastapi_restful.tasks import repeat_every
 
 from routers import category_router, map_router, gdrive_router, image_router, auth_router
 from settings import get_settings
-from services.backups import BackupMakerFactory
+from services.backup import BackupMakerFactory
 
 
 @asynccontextmanager
