@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Dict, Any
 from functools import lru_cache
 
@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     jwt_secret_key: str
     jwt_algorithm: str
 
-    base_url: str = "http://localhost:8000"
+    base_url: str
 
     logging: Dict[str, Any] = {
         "version": 1,
@@ -40,9 +40,7 @@ class Settings(BaseSettings):
         },
     }
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(env_file="../.env", env_file_encoding="utf-8")
 
 
 @lru_cache
