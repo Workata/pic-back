@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 from tinydb import Query
 
@@ -40,11 +40,16 @@ async def get_all_markers() -> JSONResponse:
     return JSONResponse(content=markers_coll.all(), status_code=status.HTTP_200_OK)
 
 
-@router.post("/folder/{folder_id}")
-async def map_folder(folder_id: str, user: AuthenticatedUser = Depends(get_current_user)) -> JSONResponse:
+def map_folder_task(folder_id: str) -> None:
     mapper = GoogleDriveImagesMapperFactory.create()
     mapper.map_folder(folder_id)
+
+
+@router.post("/folder/{folder_id}")
+async def map_folder(
+    folder_id: str, background_tasks: BackgroundTasks, user: AuthenticatedUser = Depends(get_current_user)
+) -> JSONResponse:
+    background_tasks.add_task(map_folder_task, folder_id)
     return JSONResponse(
-        content={"info": "Folder will be mapped in the background!"},
-        status_code=status.HTTP_201_CREATED
+        content={"info": "Folder will be mapped in the background!"}, status_code=status.HTTP_201_CREATED
     )
