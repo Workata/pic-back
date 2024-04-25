@@ -5,6 +5,7 @@ from tinydb import Query, TinyDB
 from db import CollectionProvider
 from models import Coords, Marker
 from settings import get_settings
+import logging
 
 from services.image_url_generator import TomtolImageUrlGenerator, GoogleDriveImageUrlGenerator
 
@@ -33,6 +34,8 @@ class CollectionProviderInterface(t.Protocol):
 
 collection_provider = CollectionProvider()
 
+logger = logging.getLogger("images_mapper")
+
 
 class GoogleDriveImagesMapper:
     def __init__(
@@ -50,9 +53,8 @@ class GoogleDriveImagesMapper:
 
     def map_folder(self, folder_id: str, page_token: t.Optional[str] = None) -> None:
         data = self._data_fetcher.query_content(
-            query=f"'{folder_id}' in parents",
-            fields=["id", "name", "mimeType"],
-            page_size=self._settings.images_page_size,
+            query=f"'{folder_id}' in parents and (mimeType = 'image/jpeg' or mimeType = 'image/png')",
+            fields=["id"],
             page_token=page_token,
         )
 
@@ -75,3 +77,5 @@ class GoogleDriveImagesMapper:
             new_marker.model_dump(),
             (query.coords.latitude == coords.latitude) & (query.coords.longitude == coords.longitude),
         )
+        print(f"Succesfully mapped image {new_marker.url} to {coords}")     # TODO delete this
+        logger.info(f"Succesfully mapped image {new_marker.url} to {coords}")

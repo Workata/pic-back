@@ -9,6 +9,10 @@ from routers import category_router, map_router, gdrive_router, image_router, au
 from settings import get_settings
 from services.backup import BackupMakerFactory
 
+import logging
+import logging.config
+
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> t.Any:
@@ -20,6 +24,7 @@ async def lifespan(app: FastAPI) -> t.Any:
 
 
 settings = get_settings()
+logging.config.dictConfig(settings.logging)
 
 app = FastAPI(lifespan=lifespan)
 

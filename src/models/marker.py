@@ -14,6 +14,9 @@ class Coords(BaseModel):
     @field_validator("longitude")
     def longitude_check(cls, v: float) -> float:
         return round(v, COORDS_PRECISION)
+    
+    def __str__(self) -> str:
+        return f"lat: {self.latitude}, lon: {self.longitude}"
 
 
 class Marker(BaseModel):
