@@ -17,7 +17,7 @@ class WebImageCoordinatesGetterInterface(t.Protocol):
 
 class GoogleDriveDataFetcherInterface(t.Protocol):
     def query_content(
-        self, query: str, fields: t.List[str], page_token: t.Optional[str], page_size: int, spaces: str = "drive"
+        self, query: str, fields: t.List[str], page_token: t.Optional[str] = None, page_size: int = 25
     ) -> t.Any:
         pass
 
@@ -52,9 +52,10 @@ class GoogleDriveImagesMapper:
         self._settings = get_settings()
 
     def map_folder(self, folder_id: str, page_token: t.Optional[str] = None) -> None:
+        # ! query here has to be the same as in 'get_folder_content' endpoint
         data = self._data_fetcher.query_content(
-            query=f"'{folder_id}' in parents and (mimeType = 'image/jpeg' or mimeType = 'image/png')",
-            fields=["id"],
+            query=f"'{folder_id}' in parents",
+            fields=["id", "mimeType"],
             page_token=page_token,
         )
 
@@ -77,5 +78,5 @@ class GoogleDriveImagesMapper:
             new_marker.model_dump(),
             (query.coords.latitude == coords.latitude) & (query.coords.longitude == coords.longitude),
         )
-        print(f"Succesfully mapped image {new_marker.url} to {coords}")     # TODO delete this
+        print(f"Succesfully mapped image {new_marker.url} to {coords}")  # TODO delete this
         logger.info(f"Succesfully mapped image {new_marker.url} to {coords}")

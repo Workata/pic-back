@@ -17,7 +17,8 @@ class GoogleDriveDataFetcher:
         self.service = build("drive", "v3", credentials=creds)
 
     def query_content(
-        self, query: str,
+        self,
+        query: str,
         fields: t.List[str],
         page_token: t.Optional[str] = None,
         page_size: int = settings.images_page_size,
@@ -43,7 +44,7 @@ class GoogleDriveDataFetcher:
                 spaces=self.SPACES,
                 fields=f"nextPageToken, files({fields_str})",
                 pageSize=page_size,
-                orderBy="name"
+                orderBy="name",
             )
             .execute()
         )

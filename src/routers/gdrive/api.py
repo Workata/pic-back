@@ -9,7 +9,7 @@ settings = get_settings()
 
 
 @router.get("/folder/{folder_id}")
-def read_root(folder_id: str, page_token: t.Optional[str] = None) -> t.Any:
+def get_folder_content(folder_id: str, page_token: t.Optional[str] = None) -> t.Any:
     """
     TODO ANALAYZE
     if page size is more than 25 there seems to be a problem
@@ -18,10 +18,7 @@ def read_root(folder_id: str, page_token: t.Optional[str] = None) -> t.Any:
     """
     fetcher = GoogleDriveDataFetcher()
     res = fetcher.query_content(
-        query=f"'{folder_id}' in parents",
-        fields=["id", "name", "mimeType"],
-        page_size=settings.images_page_size,
-        page_token=page_token,
+        query=f"'{folder_id}' in parents", fields=["id", "name", "mimeType"], page_token=page_token
     )
     parser = GoogleDriveGeneralDataParser()
     parsed_res = parser.parse(res)

@@ -13,7 +13,6 @@ import logging
 import logging.config
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> t.Any:
     """
