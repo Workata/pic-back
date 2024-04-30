@@ -11,6 +11,7 @@ services:
       - "8000:8000"
     volumes:
       - "./data:/data"
+      - "./logs:/logs"
 
   caddy:
     container_name: caddy
