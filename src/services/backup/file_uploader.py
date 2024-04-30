@@ -9,7 +9,7 @@ class FileUploader:
     SCOPES: t.List[str] = ["https://www.googleapis.com/auth/drive.file"]
 
     def __init__(self) -> None:
-        creds = Credentials.from_authorized_user_file("./data/token.json", self.SCOPES)
+        creds = Credentials.from_authorized_user_file("../data/token.json", self.SCOPES)
         self.service = build("drive", "v3", credentials=creds)
 
     def upload(self, file_path: str, parent_folder_id: str, uploaded_file_name: str) -> None:

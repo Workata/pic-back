@@ -5,10 +5,10 @@ from fastapi.responses import JSONResponse, Response
 from tinydb import Query
 from tinydb.table import Document
 
-from src.models import Category, AuthenticatedUser
-from src.db import CollectionProvider
-from src.services import GDriveImageUrlGenerator
-from src.routers.auth.utils import get_current_user
+from models import Category, AuthenticatedUser
+from db import CollectionProvider
+from services import GoogleDriveImageUrlGenerator
+from routers.auth.utils import get_current_user
 from .exceptions import CategoryNotFound, CategoryExists
 from .serializers import UpdateCategorySerializer
 
@@ -43,8 +43,8 @@ async def get_images_from_category(category_name: str) -> JSONResponse:
             "id": img["id"],
             "name": img["name"],
             "comment": img["comment"],
-            "thumbnail_url": GDriveImageUrlGenerator.generate_thumbnail_img_url(img["id"]),
-            "image_url": GDriveImageUrlGenerator.generate_standard_img_url(img["id"]),
+            "thumbnail_url": GoogleDriveImageUrlGenerator.generate_thumbnail_img_url(img["id"]),
+            "image_url": GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(img["id"]),
         }
         for img in images
     ]

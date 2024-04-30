@@ -5,10 +5,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_restful.tasks import repeat_every
 
-from src.routers import (auth_router, category_router, gdrive_router,
-                         image_router, map_router)
-from src.settings import get_settings
-from src.services.backups import BackupMakerFactory
+from routers import category_router, map_router, gdrive_router, image_router, auth_router
+from settings import get_settings
+from services.backup import BackupMakerFactory
+
+import logging
+import logging.config
 
 
 @asynccontextmanager
@@ -21,6 +23,7 @@ async def lifespan(app: FastAPI) -> t.Any:
 
 
 settings = get_settings()
+logging.config.dictConfig(settings.logging)
 
 app = FastAPI(lifespan=lifespan)
 
@@ -44,7 +47,10 @@ app.add_middleware(
 
 backup_maker = BackupMakerFactory.create()
 
+
 @repeat_every(seconds=60 * 60 * 24)
 async def backup_task() -> None:
-    print("Backup...")
+    if settings.environment == "dev":
+        print("Backup omitted - dev env")
+        return
     backup_maker.make()

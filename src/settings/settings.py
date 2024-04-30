@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Dict, Any
 from functools import lru_cache
 
@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     access_token_lifetime_minutes: int
     jwt_secret_key: str
     jwt_algorithm: str
+
+    frontend_base_url: str
+    images_page_size: int = 25
 
     logging: Dict[str, Any] = {
         "version": 1,
@@ -28,7 +31,7 @@ class Settings(BaseSettings):
         },
         "handlers": {
             "console": {"class": "logging.StreamHandler", "formatter": "simple"},
-            "file": {"class": "logging.FileHandler", "filename": "./logs/all.log", "formatter": "verbose"},
+            "file": {"class": "logging.FileHandler", "filename": "../logs/all.log", "formatter": "verbose"},
         },
         "loggers": {
             "general": {
@@ -38,9 +41,7 @@ class Settings(BaseSettings):
         },
     }
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(env_file="../.env", env_file_encoding="utf-8")
 
 
 @lru_cache

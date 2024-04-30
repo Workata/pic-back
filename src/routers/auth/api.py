@@ -6,8 +6,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from passlib.hash import bcrypt
 from tinydb import where
 
-from src.db import CollectionProvider
-from src.settings import get_settings
+from db import CollectionProvider
+from settings import get_settings
 
 from .utils import create_access_token
 from .exceptions import WrongCredentials
