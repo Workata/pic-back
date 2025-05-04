@@ -1,1 +1,1 @@
-from .api import router as image_router
+from .router import router as image_router

@@ -1,1 +1,1 @@
-from .api import router as category_router
+from .router import router as category_router

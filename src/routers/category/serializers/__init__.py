@@ -1,1 +1,1 @@
-from .update_category import UpdateCategorySerializer
+from .input.update_category import UpdateCategoryInputSerializer
