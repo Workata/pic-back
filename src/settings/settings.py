@@ -14,7 +14,9 @@ class Settings(BaseSettings):
     jwt_algorithm: str
 
     frontend_base_url: str
-    images_page_size: int = 25
+
+    # pagination
+    default_page_size: int
 
     logging: Dict[str, Any] = {
         "version": 1,

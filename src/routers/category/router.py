@@ -1,4 +1,4 @@
-from typing import List, Any, Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, status, Depends
 from fastapi.responses import JSONResponse, Response
@@ -11,28 +11,28 @@ from services import GoogleDriveImageUrlGenerator
 from routers.auth.utils import get_current_user
 from settings import get_settings
 from .exceptions import CategoryNotFound, CategoryExists
-from .serializers import UpdateCategorySerializer
+from .serializers.input import UpdateCategoryInputSerializer
+from .serializers.output import ImageToShow, ImagesFromCategoryOutputSerializer
 
 
 collection_provider = CollectionProvider()
 query = Query()
 router = APIRouter(prefix="/api/v1/categories", tags=["categories"])
-settings = get_settings()
+config = get_settings()
 
 
 @router.get("", response_model=List[Category])
-async def get_all_categories() -> JSONResponse:
-    categories_coll = collection_provider.provide("categories")
-    return JSONResponse(content=categories_coll.all(), status_code=status.HTTP_200_OK)
+async def list_categories() -> JSONResponse:
+    categories_collection = collection_provider.provide("categories")
+    return JSONResponse(content=categories_collection.all(), status_code=status.HTTP_200_OK)
 
 
-@router.get("/{category_name}", response_model=Any)
-async def get_images_from_category(category_name: str, page: int = 0) -> JSONResponse:
+@router.get("/{category_name}", response_model=List[ImagesFromCategoryOutputSerializer])
+async def get_images_from_category(
+    category_name: str, page: int = 0, page_size: int = config.default_page_size
+) -> JSONResponse:
     """
     Get images belonging to given category
-    Res: [{id, name, comment, image_url, thumbnail_url}]
-    TODO create response model
-    paginated
     """
     images_coll = collection_provider.provide("images")
     categories_coll = collection_provider.provide("categories")
@@ -40,17 +40,18 @@ async def get_images_from_category(category_name: str, page: int = 0) -> JSONRes
     if not categories_coll.get(query.name == category_name):
         raise CategoryNotFound(name=category_name)
 
-    size = settings.images_page_size
-    offset = page * size
-    images = images_coll.search(query.categories.any(query.name == category_name))[offset : offset + size]  # noqa: E203
+    offset = page * page_size
+    images = images_coll.search(query.categories.any(query.name == category_name))[
+        offset : offset + page_size  # noqa: E203
+    ]
     formatted_images = [
-        {
-            "id": img["id"],
-            "name": img["name"],
-            "comment": img["comment"],
-            "thumbnail_url": GoogleDriveImageUrlGenerator.generate_thumbnail_img_url_v2(img["id"]),
-            "image_url": GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(img["id"]),
-        }
+        ImageToShow(
+            id= img["id"],
+            name = img["name"],
+            comment = img["comment"],
+            thumbnail_url = GoogleDriveImageUrlGenerator.generate_thumbnail_img_url_v2(img["id"]),
+            image_url = GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(img["id"])
+        ).model_dump()
         for img in images
     ]
     return JSONResponse(content=formatted_images, status_code=status.HTTP_200_OK)
@@ -88,7 +89,7 @@ async def delete_category(category_name: str, user: AuthenticatedUser = Depends(
 
 @router.patch("")
 async def update_category(
-    category_to_update: UpdateCategorySerializer, user: AuthenticatedUser = Depends(get_current_user)
+    category_to_update: UpdateCategoryInputSerializer, user: AuthenticatedUser = Depends(get_current_user)
 ) -> Response:
     """
     Update category in 'categories' collection
