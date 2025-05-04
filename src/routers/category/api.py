@@ -9,6 +9,7 @@ from models import Category, AuthenticatedUser
 from db import CollectionProvider
 from services import GoogleDriveImageUrlGenerator
 from routers.auth.utils import get_current_user
+from settings import get_settings
 from .exceptions import CategoryNotFound, CategoryExists
 from .serializers import UpdateCategorySerializer
 
@@ -16,6 +17,7 @@ from .serializers import UpdateCategorySerializer
 collection_provider = CollectionProvider()
 query = Query()
 router = APIRouter(prefix="/api/v1/categories", tags=["categories"])
+settings = get_settings()
 
 
 @router.get("", response_model=List[Category])
@@ -25,11 +27,12 @@ async def get_all_categories() -> JSONResponse:
 
 
 @router.get("/{category_name}", response_model=Any)
-async def get_images_from_category(category_name: str) -> JSONResponse:
+async def get_images_from_category(category_name: str, page: int = 0) -> JSONResponse:
     """
     Get images belonging to given category
     Res: [{id, name, comment, image_url, thumbnail_url}]
     TODO create response model
+    paginated
     """
     images_coll = collection_provider.provide("images")
     categories_coll = collection_provider.provide("categories")
@@ -37,7 +40,9 @@ async def get_images_from_category(category_name: str) -> JSONResponse:
     if not categories_coll.get(query.name == category_name):
         raise CategoryNotFound(name=category_name)
 
-    images = images_coll.search(query.categories.any(query.name == category_name))
+    size = settings.images_page_size
+    offset = page * size
+    images = images_coll.search(query.categories.any(query.name == category_name))[offset : offset + size]  # noqa: E203
     formatted_images = [
         {
             "id": img["id"],
