@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Request
 from fastapi.responses import JSONResponse, Response
 from tinydb import Query
 from tinydb.table import Document
@@ -17,7 +17,8 @@ from .serializers.output import ImageToShow, ImagesFromCategoryOutputSerializer
 
 collection_provider = CollectionProvider()
 query = Query()
-router = APIRouter(prefix="/api/v1/categories", tags=["categories"])
+api_prefix = "/api/v1/categories"
+router = APIRouter(prefix=api_prefix, tags=["categories"])
 config = get_settings()
 
 
@@ -27,9 +28,9 @@ async def list_categories() -> JSONResponse:
     return JSONResponse(content=categories_collection.all(), status_code=status.HTTP_200_OK)
 
 
-@router.get("/{category_name}", response_model=List[ImagesFromCategoryOutputSerializer])
+@router.get("/{category_name}", response_model=ImagesFromCategoryOutputSerializer)
 async def get_images_from_category(
-    category_name: str, page: int = 0, page_size: int = config.default_page_size
+    category_name: str, request: Request, page: int = 0, page_size: int = config.default_page_size
 ) -> JSONResponse:
     """
     Get images belonging to given category
@@ -44,7 +45,7 @@ async def get_images_from_category(
     images = images_coll.search(query.categories.any(query.name == category_name))[
         offset : offset + page_size  # noqa: E203
     ]
-    formatted_images = [
+    images = [
         ImageToShow(
             id= img["id"],
             name = img["name"],
@@ -54,7 +55,14 @@ async def get_images_from_category(
         ).model_dump()
         for img in images
     ]
-    return JSONResponse(content=formatted_images, status_code=status.HTTP_200_OK)
+    previous_page_link = f"{request.base_url}{api_prefix}/{category_name}?page={page-1}" if page != 0 else None
+    next_page_link = None
+    serialized_response = ImagesFromCategoryOutputSerializer(
+        images=images,
+        previous_page_link=previous_page_link,
+        next_page_link=next_page_link 
+    )
+    return JSONResponse(content=serialized_response.model_dump(), status_code=status.HTTP_200_OK)
 
 
 @router.post("")
@@ -62,7 +70,7 @@ async def create_category(new_category: Category, user: AuthenticatedUser = Depe
     categories = collection_provider.provide("categories")
     if categories.get(query.name == new_category.name):
         raise CategoryExists(name=new_category.name)
-    categories.insert(new_category.dict())
+    categories.insert(new_category.model_dump())
     return JSONResponse(
         content={"detail": f"Category '{new_category.name}' has been created successfuly."},
         status_code=status.HTTP_201_CREATED,
