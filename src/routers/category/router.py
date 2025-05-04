@@ -4,6 +4,7 @@ from fastapi import APIRouter, status, Depends, Request
 from fastapi.responses import JSONResponse, Response
 from tinydb import Query
 from tinydb.table import Document
+import math
 
 from models import Category, AuthenticatedUser
 from db import CollectionProvider
@@ -17,8 +18,8 @@ from .serializers.output import ImageToShow, ImagesFromCategoryOutputSerializer
 
 collection_provider = CollectionProvider()
 query = Query()
-api_prefix = "/api/v1/categories"
-router = APIRouter(prefix=api_prefix, tags=["categories"])
+router_path = "api/v1/categories"
+router = APIRouter(prefix=f"/{router_path}", tags=["categories"])
 config = get_settings()
 
 
@@ -34,13 +35,17 @@ async def get_images_from_category(
 ) -> JSONResponse:
     """
     Get images belonging to given category
+    Paginated
+    TODO page, page_size validation
     """
-    images_coll = collection_provider.provide("images")
     categories_coll = collection_provider.provide("categories")
-
     if not categories_coll.get(query.name == category_name):
         raise CategoryNotFound(name=category_name)
 
+    images_coll = collection_provider.provide("images")
+    images_from_category = images_coll.search(query.categories.any(query.name == category_name))
+    number_of_images_from_category = len(images_from_category)
+    total_number_of_pages = math.ceil(number_of_images_from_category / page_size)
     offset = page * page_size
     images = images_coll.search(query.categories.any(query.name == category_name))[
         offset : offset + page_size  # noqa: E203
@@ -55,12 +60,17 @@ async def get_images_from_category(
         ).model_dump()
         for img in images
     ]
-    previous_page_link = f"{request.base_url}{api_prefix}/{category_name}?page={page-1}" if page != 0 else None
-    next_page_link = None
+    endpoint_url = f"{request.base_url}{router_path}/{category_name}"
+    previous_page_link = f"{endpoint_url}?page={page-1}" if page != 0 else None
+    next_page_link = f"{endpoint_url}?page={page+1}" if page < total_number_of_pages - 1 else None
     serialized_response = ImagesFromCategoryOutputSerializer(
         images=images,
         previous_page_link=previous_page_link,
-        next_page_link=next_page_link 
+        next_page_link=next_page_link,
+        total_number_of_records=number_of_images_from_category,
+        total_number_of_pages=total_number_of_pages,
+        current_page=page,
+        page_size=page_size,
     )
     return JSONResponse(content=serialized_response.model_dump(), status_code=status.HTTP_200_OK)
 
