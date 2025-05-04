@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from routers.shared.serializers.output import PaginatedResponseOutputSerializer
+from routers.shared.serializers.output import VerbosePaginatedResponseOutputSerializer
 
 
 class ImageToShow(BaseModel):
@@ -11,5 +11,5 @@ class ImageToShow(BaseModel):
     image_url: str
 
 
-class ImagesFromCategoryOutputSerializer(PaginatedResponseOutputSerializer):
+class ImagesFromCategoryOutputSerializer(VerbosePaginatedResponseOutputSerializer):
     images: List[ImageToShow]

@@ -52,24 +52,29 @@ async def get_images_from_category(
     ]
     images = [
         ImageToShow(
-            id= img["id"],
-            name = img["name"],
-            comment = img["comment"],
-            thumbnail_url = GoogleDriveImageUrlGenerator.generate_thumbnail_img_url_v2(img["id"]),
-            image_url = GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(img["id"])
+            id=img["id"],
+            name=img["name"],
+            comment=img["comment"],
+            thumbnail_url=GoogleDriveImageUrlGenerator.generate_thumbnail_img_url_v2(img["id"]),
+            image_url=GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(img["id"]),
         ).model_dump()
         for img in images
     ]
+
     endpoint_url = f"{request.base_url}{router_path}/{category_name}"
-    previous_page_link = f"{endpoint_url}?page={page-1}" if page != 0 else None
-    next_page_link = f"{endpoint_url}?page={page+1}" if page < total_number_of_pages - 1 else None
+    previous_page = page - 1 if page != 0 else None
+    previous_page_link = f"{endpoint_url}?page={previous_page}" if previous_page is not None else None
+    next_page = page + 1 if page < total_number_of_pages - 1 else None
+    next_page_link = f"{endpoint_url}?page={next_page}" if next_page is not None else None
     serialized_response = ImagesFromCategoryOutputSerializer(
         images=images,
         previous_page_link=previous_page_link,
         next_page_link=next_page_link,
         total_number_of_records=number_of_images_from_category,
         total_number_of_pages=total_number_of_pages,
+        previous_page=previous_page,
         current_page=page,
+        next_page=next_page,
         page_size=page_size,
     )
     return JSONResponse(content=serialized_response.model_dump(), status_code=status.HTTP_200_OK)
