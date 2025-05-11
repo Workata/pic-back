@@ -5,7 +5,7 @@ from googleapiclient.discovery import build
 from settings import get_settings
 
 
-settings = get_settings()
+config = get_settings()
 
 
 class GoogleDriveDataFetcher:
@@ -21,7 +21,7 @@ class GoogleDriveDataFetcher:
         query: str,
         fields: t.List[str],
         page_token: t.Optional[str] = None,
-        page_size: int = settings.images_page_size,
+        page_size: int = config.default_page_size,
     ) -> t.Any:
         fields_str = ", ".join(fields)
         if page_token:

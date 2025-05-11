@@ -7,7 +7,7 @@ from tinydb.table import Document
 
 from db import CollectionProvider
 from models import Image, ResponseMessage, Category, AuthenticatedUser
-from serializers import CommentInputSerializer
+from .serializers.input import CommentInputSerializer
 from routers.auth.utils import get_current_user
 from .exceptions import ImageNotFound
 
