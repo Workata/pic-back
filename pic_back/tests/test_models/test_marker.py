@@ -1,4 +1,4 @@
-from models import Marker, Coords
+from pic_back.models import Marker, Coords
 from assertpy import assert_that
 
 

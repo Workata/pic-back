@@ -1,12 +1,24 @@
 # pic-back
 
 
+
 ## dev
 
-Run dev server
+Install uv
 ```sh
-./scripts/run_dev.sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+
+Verify uv installation
+```sh
+uv --version
+```
+
+Sync packages
+```sh
+uv sync
+```
+
 
 To use scripts
 ```sh

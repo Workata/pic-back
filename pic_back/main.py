@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_restful.tasks import repeat_every
+from fastapi_utils.tasks import repeat_every
 
 from routers import category_router, map_router, gdrive_router, image_router, auth_router
 from settings import get_settings

@@ -18,6 +18,8 @@ notes.txt
 # vscode related settings - not needed because all settings should be declared in devcontainer
 .vscode
 
+.ruff_cache
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

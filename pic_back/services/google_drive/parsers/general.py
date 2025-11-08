@@ -31,4 +31,4 @@ class GoogleDriveGeneralDataParser:
 
     def _get_comment(self, img_id: str) -> str:
         img = self._images_collection.get(Query().id == img_id)
-        return img["comment"] if img is not None else ""  # type: ignore
+        return img["comment"] if img is not None else ""

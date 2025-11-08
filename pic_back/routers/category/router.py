@@ -47,8 +47,11 @@ async def get_images_from_category(
     number_of_images_from_category = len(images_from_category)
     total_number_of_pages = math.ceil(number_of_images_from_category / page_size)
     offset = page * page_size
-    images = images_coll.search(query.categories.any(query.name == category_name))[
-        offset : offset + page_size  # noqa: E203
+    images = images_coll.search(
+        query.categories.any(query.name == category_name)
+    )[
+        offset : offset
+        + page_size  # noqa: E203
     ]
     images = [
         ImageToShow(
