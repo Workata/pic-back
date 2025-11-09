@@ -6,11 +6,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from passlib.hash import bcrypt
 from tinydb import where
 
-from db import CollectionProvider
-from settings import get_settings
-
-from .utils import create_access_token
-from .exceptions import WrongCredentials
+from pic_back.db import CollectionProvider
+from pic_back.routers.auth.exceptions import WrongCredentials
+from pic_back.routers.auth.utils import create_access_token
+from pic_back.settings import get_settings
 
 settings = get_settings()
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])

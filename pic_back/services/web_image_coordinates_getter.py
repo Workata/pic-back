@@ -4,7 +4,7 @@ from io import BytesIO
 import requests
 from exif import Image
 
-from models import Coords
+from pic_back.models import Coords
 
 
 class WebImageCoordinatesGetter:

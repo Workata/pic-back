@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field
-from .category import Category
 from typing import List
+
+from pydantic import BaseModel, Field
+
+from pic_back.models.category import Category
 
 
 class Image(BaseModel):

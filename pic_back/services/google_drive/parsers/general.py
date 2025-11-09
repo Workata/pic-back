@@ -3,9 +3,8 @@ from pathlib import Path
 
 from tinydb import Query
 
-from db import CollectionProvider
-
-from services.image_url_generator import GoogleDriveImageUrlGenerator
+from pic_back.db import CollectionProvider
+from pic_back.services.image_url_generator import GoogleDriveImageUrlGenerator
 
 
 class GoogleDriveGeneralDataParser:

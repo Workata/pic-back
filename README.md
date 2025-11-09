@@ -38,3 +38,9 @@ docker build . --tag pic-back-image
 docker run pic-back-image
 docker-compose up
 ```
+
+
+## notes
+
+`typing_inspect` is required by `fastapi-utils`
+

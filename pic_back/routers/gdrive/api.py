@@ -1,8 +1,9 @@
-from fastapi import APIRouter
 import typing as t
-from services import GoogleDriveDataFetcher, GoogleDriveGeneralDataParser
-from settings import get_settings
 
+from fastapi import APIRouter
+
+from pic_back.services import GoogleDriveDataFetcher, GoogleDriveGeneralDataParser
+from pic_back.settings import get_settings
 
 router = APIRouter(prefix="/api/v1/gdrive", tags=["gdrive"])
 settings = get_settings()

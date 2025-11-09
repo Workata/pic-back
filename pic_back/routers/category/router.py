@@ -1,20 +1,19 @@
+import math
 from typing import List, Optional
 
-from fastapi import APIRouter, status, Depends, Request
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse, Response
 from tinydb import Query
 from tinydb.table import Document
-import math
 
-from models import Category, AuthenticatedUser
-from db import CollectionProvider
-from services import GoogleDriveImageUrlGenerator
-from routers.auth.utils import get_current_user
-from settings import get_settings
-from .exceptions import CategoryNotFound, CategoryExists
-from .serializers.input import UpdateCategoryInputSerializer
-from .serializers.output import ImageToShow, ImagesFromCategoryOutputSerializer
-
+from pic_back.db import CollectionProvider
+from pic_back.models import AuthenticatedUser, Category
+from pic_back.routers.auth.utils import get_current_user
+from pic_back.routers.category.exceptions import CategoryExists, CategoryNotFound
+from pic_back.routers.category.serializers.input import UpdateCategoryInputSerializer
+from pic_back.routers.category.serializers.output import ImagesFromCategoryOutputSerializer, ImageToShow
+from pic_back.services import GoogleDriveImageUrlGenerator
+from pic_back.settings import get_settings
 
 collection_provider = CollectionProvider()
 query = Query()

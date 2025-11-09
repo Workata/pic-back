@@ -1,5 +1,5 @@
 from .category import Category
-from .marker import Marker, Coords
 from .image import Image
-from .user import User, AuthenticatedUser
+from .marker import Coords, Marker
 from .response_message import ResponseMessage
+from .user import AuthenticatedUser, User

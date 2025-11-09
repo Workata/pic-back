@@ -1,5 +1,6 @@
-from pic_back.models import Marker, Coords
 from assertpy import assert_that
+
+from pic_back.models import Coords, Marker
 
 
 def test_model_fields():

@@ -1,13 +1,12 @@
+import logging
 import typing as t
 
+from services.image_url_generator import GoogleDriveImageUrlGenerator, TomtolImageUrlGenerator
 from tinydb import Query, TinyDB
 
-from db import CollectionProvider
-from models import Coords, Marker
-from settings import get_settings
-import logging
-
-from services.image_url_generator import TomtolImageUrlGenerator, GoogleDriveImageUrlGenerator
+from pic_back.db import CollectionProvider
+from pic_back.models import Coords, Marker
+from pic_back.settings import get_settings
 
 
 class WebImageCoordinatesGetterInterface(t.Protocol):

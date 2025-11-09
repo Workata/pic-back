@@ -1,5 +1,5 @@
-from services.google_drive.data_fetcher import GoogleDriveDataFetcher
-from services.google_drive import GoogleDriveImagesMapperFactory
+from pic_back.services.google_drive import GoogleDriveImagesMapperFactory
+from pic_back.services.google_drive.data_fetcher import GoogleDriveDataFetcher
 
 fetcher = GoogleDriveDataFetcher()
 

@@ -5,11 +5,10 @@ export PYTHONPATH=${PYTHONPATH}:${PWD}
 python3 ./utils/generate_user.py
 """
 
+from db import CollectionProvider
 from passlib.hash import bcrypt
 
-from db import CollectionProvider
-from models import User
-
+from pic_back.models import User
 
 collection_provider = CollectionProvider()
 

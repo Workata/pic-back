@@ -1,5 +1,6 @@
-from tinydb import TinyDB
 from typing import Dict
+
+from tinydb import TinyDB
 
 
 class CollectionProvider:

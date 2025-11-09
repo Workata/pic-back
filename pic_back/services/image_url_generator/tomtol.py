@@ -1,5 +1,6 @@
-from settings import get_settings
 import typing as t
+
+from pic_back.settings import get_settings
 
 
 class TomtolImageUrlGenerator:

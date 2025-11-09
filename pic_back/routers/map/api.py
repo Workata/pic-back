@@ -1,14 +1,13 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, status, BackgroundTasks
-from fastapi.responses import JSONResponse
-from tinydb import Query
-
 from db import CollectionProvider
+from fastapi import APIRouter, BackgroundTasks, Depends, status
+from fastapi.responses import JSONResponse
 from models import AuthenticatedUser, Marker, ResponseMessage
 from routers.auth.utils import get_current_user
 from routers.map.exceptions import MarkerExists
 from services import GoogleDriveImagesMapperFactory
+from tinydb import Query
 
 router = APIRouter(prefix="/api/v1/map", tags=["map"])
 collection_provider = CollectionProvider()

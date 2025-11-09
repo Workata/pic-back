@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+import datetime as dt
 from typing import Optional
 
 from fastapi import Depends
@@ -6,11 +6,10 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from tinydb import where
 
-from db import CollectionProvider
-from settings import get_settings
-from models import AuthenticatedUser
-
-from .exceptions import WrongCredentials
+from pic_back.db import CollectionProvider
+from pic_back.models import AuthenticatedUser
+from pic_back.routers.auth.exceptions import WrongCredentials
+from pic_back.settings import get_settings
 
 collection_provider = CollectionProvider()
 settings = get_settings()
@@ -32,10 +31,14 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> Authenticated
     return AuthenticatedUser(username=user["username"])
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: Optional[dt.timedelta] = None) -> str:
     """shouldnt be async"""
     to_encode = data.copy()
-    expire = datetime.utcnow() + expires_delta if expires_delta else datetime.utcnow() + timedelta(minutes=15)
+    expire = (
+        dt.datetime.now(dt.timezone.utc) + expires_delta
+        if expires_delta
+        else dt.datetime.now(dt.timezone.utc) + dt.timedelta(minutes=15)
+    )
     to_encode.update({"exp": expire})
     return jwt.encode(  # type: ignore [no-any-return]
         claims=to_encode, key=settings.jwt_secret_key, algorithm=settings.jwt_algorithm

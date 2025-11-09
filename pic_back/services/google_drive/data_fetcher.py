@@ -2,8 +2,8 @@ import typing as t
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from settings import get_settings
 
+from pic_back.settings import get_settings
 
 config = get_settings()
 

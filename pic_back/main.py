@@ -1,3 +1,5 @@
+import logging
+import logging.config
 import typing as t
 from contextlib import asynccontextmanager
 
@@ -5,12 +7,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_utils.tasks import repeat_every
 
-from routers import category_router, map_router, gdrive_router, image_router, auth_router
-from settings import get_settings
-from services.backup import BackupMakerFactory
-
-import logging
-import logging.config
+from pic_back.routers import auth_router, category_router, gdrive_router, image_router, map_router
+from pic_back.services.backup import BackupMakerFactory
+from pic_back.settings import get_settings
 
 
 @asynccontextmanager

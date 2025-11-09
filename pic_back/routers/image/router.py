@@ -1,15 +1,15 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, status, Depends
+from db import CollectionProvider
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
+from models import AuthenticatedUser, Category, Image, ResponseMessage
+from routers.auth.utils import get_current_user
 from tinydb import Query
 from tinydb.table import Document
 
-from db import CollectionProvider
-from models import Image, ResponseMessage, Category, AuthenticatedUser
-from .serializers.input import CommentInputSerializer
-from routers.auth.utils import get_current_user
 from .exceptions import ImageNotFound
+from .serializers.input import CommentInputSerializer
 
 collection_provider = CollectionProvider()
 query = Query()
