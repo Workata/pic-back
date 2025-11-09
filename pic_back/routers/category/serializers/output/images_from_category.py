@@ -1,7 +1,8 @@
 from typing import List
 
 from pydantic import BaseModel
-from routers.shared.serializers.output import VerbosePaginatedResponseOutputSerializer
+
+from pic_back.routers.shared.serializers.output import VerbosePaginatedResponseOutputSerializer
 
 
 class ImageToShow(BaseModel):

@@ -13,7 +13,7 @@ class GoogleDriveDataFetcher:
     SPACES: str = "drive"
 
     def __init__(self) -> None:
-        creds = Credentials.from_authorized_user_file("../data/token.json", self.SCOPES)
+        creds = Credentials.from_authorized_user_file("./data/token.json", self.SCOPES)
         self.service = build("drive", "v3", credentials=creds)
 
     def query_content(

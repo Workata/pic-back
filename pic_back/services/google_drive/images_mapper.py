@@ -1,11 +1,11 @@
 import logging
 import typing as t
 
-from services.image_url_generator import GoogleDriveImageUrlGenerator, TomtolImageUrlGenerator
 from tinydb import Query, TinyDB
 
 from pic_back.db import CollectionProvider
 from pic_back.models import Coords, Marker
+from pic_back.services.image_url_generator import GoogleDriveImageUrlGenerator, TomtolImageUrlGenerator
 from pic_back.settings import get_settings
 
 

@@ -34,7 +34,7 @@ class Settings(BaseSettings):
         },
         "handlers": {
             "console": {"class": "logging.StreamHandler", "formatter": "simple"},
-            "file": {"class": "logging.FileHandler", "filename": "../logs/all.log", "formatter": "verbose"},
+            "file": {"class": "logging.FileHandler", "filename": "./logs/all.log", "formatter": "verbose"},
         },
         "loggers": {
             "general": {
