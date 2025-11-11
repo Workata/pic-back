@@ -6,7 +6,7 @@ check:
 .PHONY: test
 test:
 	@echo "Running unit tests..."
-	uv run pytest --cov=pic_back .
+	uv run pytest --cov=pic_back
 
 .PHONY: run
 run:

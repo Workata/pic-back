@@ -5,14 +5,16 @@ on: [push]
 jobs:
   checks:
     runs-on: ubuntu-latest
-    container:
-      image: "../Dockerfile"
 
     steps:
-    - uses: actions/checkout@v5
+    - name: Check out code
+      uses: actions/checkout@v5
+
+    - name: Build docker test image
+      run: docker build -f ./.github/workflows/Dockerfile . --tag pic-back-test-image
 
     - name: Run static checks via pre-commit
-      run: uv run pre-commit run --all
+      run: docker run -it pic-back-test-image:latest uv run pre-commit run --all
 
-    - name: Run tests and check coverage
-      run: coverage run -m pytest ./src/
+    - name: Run unit tests
+      run: docker run -it pic-back-test-image:latest uv run pytest --cov=pic_back
