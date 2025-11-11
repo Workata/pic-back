@@ -1,8 +1,8 @@
 # pic-back
 
+Backend for pic-pages (tomtol) application.
 
-
-## dev
+### Development
 
 Install uv
 ```sh
@@ -19,28 +19,31 @@ Sync packages
 uv sync
 ```
 
-
-To use scripts
+Run static checks (via precommit)
 ```sh
-export PYTHONPATH="${PYTHONPATH}:~/projects/pic-back"
+make check
 ```
 
-To run app first time, token.json has to be generated with `gcredentials.py` but first download credentials from developer console. Token should be valid all the time (production app).
-
-coords (6 decimal)
-```
-43.213671
+Run unit tests and check coverage
+```sh
+make test
 ```
 
-Dockerize
+Optionally enable `pre-commit` hooks
+```sh
+uv run pre-commit install
 ```
+
+### Containerization
+
+Build and run docker image directly
+```sh
 docker build . --tag pic-back-image
 docker run pic-back-image
-docker-compose up
 ```
 
-
-## notes
-
-`typing_inspect` is required by `fastapi-utils`
-
+Build and run application via `docker-compose`
+```sh
+docker compose build
+docker compose up fastapi
+```

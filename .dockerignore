@@ -8,12 +8,15 @@
 .env.example
 .gitignore
 
+tests
+
 dump
 *.log
 private
 data
 
 docker-compose.yml
+.pre-commit-config.yaml
 Dockerfile
 Makefile
 LICENSE

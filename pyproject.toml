@@ -24,6 +24,7 @@ dependencies = [
 dev = [
     "assertpy==1.1",
     "mypy==1.18.2",
+    "pre-commit==4.4.0",
     "pytest==8.4.2",
     "pytest-cov==7.0.0",
     "ruff==0.14.4",
@@ -44,7 +45,7 @@ warn_unused_ignores = true
 no_implicit_optional = true
 show_error_codes = true
 
-exclude = ['tests', 'venv', 'data', 'private']
+exclude = ["tests", ".venv", "venv", "data", "private", "dump"]
 
 
 [tool.ruff]
@@ -79,12 +80,11 @@ exclude = [
     "venv",
 ]
 
-# Same as Black.
+# Same as Black
 line-length = 120
 indent-width = 4
 
 target-version = "py314"
-
 
 
 [tool.ruff.lint]

@@ -1,11 +1,7 @@
 .PHONY: check
 check:
-	@echo "Running static checks..."
-	@echo "Running mypy - type checker"
-	uv run mypy .
-	@echo "Running ruff - formatter + linter"
-	uv run ruff check --fix
-	uv run ruff format
+	@echo "Running static checks via pre-commit..."
+	uv run pre-commit run --all
 
 .PHONY: test
 test:
@@ -14,5 +10,12 @@ test:
 
 .PHONY: run
 run:
-	@echo "Running fast api application"
+	@echo "Running fast api application..."
 	uv run fastapi dev pic_back/main.py
+
+
+.PHONY: run-docker
+run-docker:
+	@echo "Running containerized fast api application..."
+	docker compose build
+	docker compose up fastapi
