@@ -1,13 +1,13 @@
 version: "3.8"
 
-services: 
+services:
   fastapi:
     container_name: fastapi
     restart: always
     build: ./
     env_file:
       - .env
-    ports: 
+    ports:
       - "8000:8000"
     volumes:
       - "./data:/data"

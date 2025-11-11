@@ -6,6 +6,8 @@ dump
 data/*
 !data/.gitkeep
 !data/database/.gitkeep
+!data/caddy_config/.gitkeep
+!data/caddy_data/.gitkeep
 
 notes.txt
 *.json
@@ -17,6 +19,8 @@ notes.txt
 
 # vscode related settings - not needed because all settings should be declared in devcontainer
 .vscode
+
+.ruff_cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

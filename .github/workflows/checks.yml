@@ -7,30 +7,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Check out code
+      uses: actions/checkout@v5
 
-    - name: Move Dockerfile from devcontainer
-      run: mv ./.devcontainer/Dockerfile ./Dockerfile
+    - name: Build docker test image
+      run: docker build -f ./.github/workflows/Dockerfile . --tag pic-back-test-image
 
-    - name: Set docker image from devcontainer
-      uses: ./.github/
+    - name: Run static checks via pre-commit
+      run: docker run pic-back-test-image:latest uv run pre-commit run --all
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements/dev.txt
-
-    - name: Check typing with mypy
-      run: mypy ./src/
-
-    - name: Format with Black
-      run: black ./src/
-
-    - name: Lint with flake8
-      run: flake8 ./src/
-
-    - name: Test with PyTest
-      run: coverage run -m pytest ./src/
-
-    - name: Check coverage with coverage.py
-      run: coverage report -m
+    - name: Run unit tests
+      run: docker run pic-back-test-image:latest uv run pytest --cov=pic_back

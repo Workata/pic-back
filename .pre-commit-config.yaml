@@ -1,0 +1,32 @@
+
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+  - id: trailing-whitespace       # ? trims trailing whitespace
+  - id: end-of-file-fixer         # ? ensures that a file is either empty, or ends with one newline
+  - id: check-yaml                # ? checks yaml files for parseable syntax
+  - id: check-added-large-files   # ? check-added-large-files
+  - id: check-toml                # ? checks toml files for parseable syntax
+  - id: detect-private-key        # ? detects the presence of private keys
+
+
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.14.4
+  hooks:
+    # run linter + fix if possible
+    - id: ruff-check
+      args: [ --fix ]
+    # Run formatter
+    - id: ruff-format
+
+# run mypy via local repo, official mirror hook has a problem with configs/deps
+- repo: local
+  hooks:
+  - id: mypy
+    name: mypy
+    entry: mypy
+    language: system
+    types: [python]
+    require_serial: true
+    exclude: tests        # verify why exclude doesn't come from pyproject.toml config

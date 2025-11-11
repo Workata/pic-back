@@ -1,28 +1,49 @@
 # pic-back
 
+Backend for pic-pages (tomtol) application.
 
-## dev
+### Development
 
-Run dev server
+Install uv
 ```sh
-./scripts/run_dev.sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-To use scripts
+Verify uv installation
 ```sh
-export PYTHONPATH="${PYTHONPATH}:~/projects/pic-back"
+uv --version
 ```
 
-To run app first time, token.json has to be generated with `gcredentials.py` but first download credentials from developer console. Token should be valid all the time (production app).
-
-coords (6 decimal)
-```
-43.213671
+Sync packages
+```sh
+uv sync
 ```
 
-Dockerize
+Run static checks (via precommit)
+```sh
+make check
 ```
+
+Run unit tests and check coverage
+```sh
+make test
+```
+
+Optionally enable `pre-commit` hooks
+```sh
+uv run pre-commit install
+```
+
+### Containerization
+
+Build and run docker image directly
+```sh
 docker build . --tag pic-back-image
 docker run pic-back-image
-docker-compose up
+```
+
+Build and run application via `docker-compose`
+```sh
+docker compose build
+docker compose up fastapi
 ```
