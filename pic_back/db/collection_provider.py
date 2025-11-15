@@ -4,7 +4,7 @@ from tinydb import TinyDB
 
 
 class CollectionProvider:
-    COLLECTIONS_BASE_PATH: str = "../data/database"
+    COLLECTIONS_BASE_PATH: str = "./data/database"
 
     COLLECTION_NAME_TO_LOCATION: Dict[str, str] = {
         "categories": f"{COLLECTIONS_BASE_PATH}/categories.json",
