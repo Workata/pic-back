@@ -21,4 +21,4 @@ def create_user(username: str, password: str) -> User:
 
 
 if __name__ == "__main__":
-    create_user(username=input(), password=input())
+    create_user(username=input(), password=input())  # pragma: no cover

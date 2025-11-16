@@ -7,9 +7,10 @@ from tinydb import Query
 from tinydb.table import Document
 
 from pic_back.db import CollectionName, CollectionProvider
+from pic_back.db.utils import CategoryExistsException, DbCategoriesOperations
 from pic_back.models import AuthenticatedUser, Category
 from pic_back.routers.auth.utils import get_current_user
-from pic_back.routers.category.exceptions import CategoryExists, CategoryNotFound
+from pic_back.routers.category.exceptions import CategoryExistsHTTPException, CategoryNotFound
 from pic_back.routers.category.serializers.input import UpdateCategoryInputSerializer
 from pic_back.routers.category.serializers.output import ImagesFromCategoryOutputSerializer, ImageToShow
 from pic_back.services import GoogleDriveImageUrlGenerator
@@ -83,10 +84,10 @@ async def get_images_from_category(
 
 @router.post("")
 async def create_category(new_category: Category, user: AuthenticatedUser = Depends(get_current_user)) -> JSONResponse:
-    categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
-    if categories_db.get(query.name == new_category.name):
-        raise CategoryExists(name=new_category.name)
-    categories_db.insert(new_category.model_dump())
+    try:
+        DbCategoriesOperations.insert(new_category)
+    except CategoryExistsException:
+        raise CategoryExistsHTTPException(name=new_category.name)
     return JSONResponse(
         content={"detail": f"Category '{new_category.name}' has been created successfuly."},
         status_code=status.HTTP_201_CREATED,

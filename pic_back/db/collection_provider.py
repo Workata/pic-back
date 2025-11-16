@@ -1,9 +1,9 @@
 from enum import Enum
 from pathlib import Path
-from typing import Dict
+from typing import Callable, Dict
 
 from tinydb import TinyDB
-from typing import Callable
+
 from pic_back.settings import get_settings
 
 
