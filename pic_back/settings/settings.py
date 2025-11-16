@@ -1,48 +1,35 @@
+from enum import Enum
 from functools import lru_cache
-from typing import Any, Dict
+from pathlib import Path
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class EnvType(str, Enum):
+    LOCAL = "local"
+    DEV = "dev"
+    TEST = "test"
+    STAGING = "staging"
+    ACCEPTANCE = "acceptane"
+    PROD = "production"
+
+
 class Settings(BaseSettings):
-    environment: str
+    environment: EnvType = Field(default=EnvType.LOCAL, validation_alias=AliasChoices("environment", "env"))
+    database_base_path: Path = Path("./data/database")
 
     google_client_id: str
     google_api_key: str
 
-    access_token_lifetime_minutes: int
+    access_token_lifetime_minutes: int = 15
     jwt_secret_key: str
-    jwt_algorithm: str
+    jwt_algorithm: str = "HS256"
 
     frontend_base_url: str
 
     # pagination
-    default_page_size: int
-
-    logging: Dict[str, Any] = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "verbose": {
-                "format": "[{levelname}][{asctime}] {message}",
-                "style": "{",
-            },
-            "simple": {
-                "format": "[{levelname}] {message}",
-                "style": "{",
-            },
-        },
-        "handlers": {
-            "console": {"class": "logging.StreamHandler", "formatter": "simple"},
-            "file": {"class": "logging.FileHandler", "filename": "./logs/all.log", "formatter": "verbose"},
-        },
-        "loggers": {
-            "general": {
-                "handlers": ["console", "file"],
-                "level": "INFO",
-            }
-        },
-    }
+    default_page_size: int = 25
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

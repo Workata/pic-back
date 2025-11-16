@@ -5,6 +5,7 @@ description = "Backend for tomtol (pic-pages) application"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "bcrypt==5.0.0",
     "exif==1.6.1",
     "fastapi-utils==0.8.0",
     "fastapi[standard]==0.121.0",
@@ -12,7 +13,6 @@ dependencies = [
     "google-auth-httplib2==0.2.1",
     "google-auth-oauthlib==1.2.3",
     "httpx>=0.28.1",
-    "passlib==1.7.4",
     "pydantic==2.12.4",
     "pydantic-settings==2.11.0",
     "python-jose==3.5.0",
@@ -154,4 +154,4 @@ omit =  [
 
 [tool.coverage.report]
 precision=2
-fail_under=1.00
+fail_under=100.00

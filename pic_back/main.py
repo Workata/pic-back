@@ -9,7 +9,7 @@ from fastapi_utils.tasks import repeat_every
 
 from pic_back.routers import auth_router, category_router, gdrive_router, image_router, map_router
 from pic_back.services.backup import BackupMakerFactory
-from pic_back.settings import get_settings
+from pic_back.settings import LOGGING_CONFIG, get_settings
 
 
 @asynccontextmanager
@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI) -> t.Any:
 
 
 settings = get_settings()
-logging.config.dictConfig(settings.logging)
+logging.config.dictConfig(LOGGING_CONFIG)
 
 app = FastAPI(lifespan=lifespan)
 

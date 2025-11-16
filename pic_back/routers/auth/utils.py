@@ -6,18 +6,17 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from tinydb import where
 
-from pic_back.db import CollectionProvider
+from pic_back.db import CollectionName, CollectionProvider
 from pic_back.models import AuthenticatedUser
 from pic_back.routers.auth.exceptions import WrongCredentials
 from pic_back.settings import get_settings
 
-collection_provider = CollectionProvider()
 settings = get_settings()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> AuthenticatedUser:
-    users_coll = collection_provider.provide("users")
+    users_db = CollectionProvider.provide(CollectionName.USERS)
     try:
         payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
         username = payload.get("username")
@@ -25,7 +24,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> Authenticated
             raise WrongCredentials()
     except JWTError as jwt_error:
         raise WrongCredentials() from jwt_error
-    user = users_coll.get(where("username") == username)
+    user = users_db.get(where("username") == username)
     if not user:
         raise WrongCredentials()
     return AuthenticatedUser(username=user["username"])

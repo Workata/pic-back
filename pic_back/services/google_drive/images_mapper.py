@@ -3,7 +3,7 @@ import typing as t
 
 from tinydb import Query, TinyDB
 
-from pic_back.db import CollectionProvider
+from pic_back.db import CollectionName
 from pic_back.models import Coords, Marker
 from pic_back.services.image_url_generator import GoogleDriveImageUrlGenerator, TomtolImageUrlGenerator
 from pic_back.settings import get_settings
@@ -27,11 +27,9 @@ class GoogleDriveImageIdsDataParserInterface(t.Protocol):
 
 
 class CollectionProviderInterface(t.Protocol):
-    def provide(self, collection_name: str) -> TinyDB:
+    def provide(cls, collection_name: CollectionName) -> TinyDB:
         pass
 
-
-collection_provider = CollectionProvider()
 
 logger = logging.getLogger("images_mapper")
 
@@ -47,7 +45,7 @@ class GoogleDriveImagesMapper:
         self._data_fetcher = data_fetcher
         self._data_parser = data_parser
         self._coords_getter = coords_getter
-        self._markers_collection = collection_provider.provide("markers")
+        self._markers_db = collection_provider.provide(CollectionName.MARKERS)
         self._settings = get_settings()
 
     def map_folder(self, folder_id: str, page_token: t.Optional[str] = None) -> None:
@@ -73,7 +71,7 @@ class GoogleDriveImagesMapper:
         url = TomtolImageUrlGenerator.generate(folder_id=folder_id, img_id=img_id, page_token=page_token)
         new_marker = Marker(coords=coords, url=url)
         query = Query()
-        self._markers_collection.upsert(
+        self._markers_db.upsert(
             new_marker.model_dump(),
             (query.coords.latitude == coords.latitude) & (query.coords.longitude == coords.longitude),
         )

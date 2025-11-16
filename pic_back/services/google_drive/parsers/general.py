@@ -3,13 +3,13 @@ from pathlib import Path
 
 from tinydb import Query
 
-from pic_back.db import CollectionProvider
+from pic_back.db import CollectionName, CollectionProvider
 from pic_back.services.image_url_generator import GoogleDriveImageUrlGenerator
 
 
 class GoogleDriveGeneralDataParser:
     def __init__(self) -> None:
-        self._images_collection = CollectionProvider().provide("images")
+        self._images_db = CollectionProvider.provide(CollectionName.IMAGES)
 
     def parse(self, data: t.Dict[t.Any, t.Any]) -> t.Dict[str, t.Any]:
         content_objects = data["files"]
@@ -29,5 +29,5 @@ class GoogleDriveGeneralDataParser:
         return {"images": images, "folders": folders, "nextPageToken": next_page_token}
 
     def _get_comment(self, img_id: str) -> str:
-        img = self._images_collection.get(Query().id == img_id)
+        img = self._images_db.get(Query().id == img_id)
         return str(img["comment"]) if img is not None else ""
