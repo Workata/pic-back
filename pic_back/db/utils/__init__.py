@@ -1,1 +1,1 @@
-from .categories import CategoryExistsException, DbCategoriesOperations
+from .categories import CategoryExistsException, CategoryNotFoundException, DbCategoriesOperations

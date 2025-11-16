@@ -1,1 +1,1 @@
-from .api import router as map_router
+from .router import router as map_router

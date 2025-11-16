@@ -5,9 +5,10 @@ from fastapi.responses import JSONResponse
 from tinydb import Query
 
 from pic_back.db import CollectionName, CollectionProvider
-from pic_back.models import AuthenticatedUser, Marker, ResponseMessage
+from pic_back.models import AuthenticatedUser, Marker
 from pic_back.routers.auth.utils import get_current_user
 from pic_back.routers.map.exceptions import MarkerExists
+from pic_back.routers.shared.serializers.output import ResponseMessage
 from pic_back.services import GoogleDriveImagesMapperFactory
 
 router = APIRouter(prefix="/api/v1/map", tags=["map"])

@@ -6,10 +6,11 @@ from tinydb import Query
 from tinydb.table import Document
 
 from pic_back.db import CollectionName, CollectionProvider
-from pic_back.models import AuthenticatedUser, Category, Image, ResponseMessage
+from pic_back.models import AuthenticatedUser, Category, Image
 from pic_back.routers.auth.utils import get_current_user
 from pic_back.routers.image.exceptions import ImageNotFound
 from pic_back.routers.image.serializers.input import CommentInputSerializer
+from pic_back.routers.shared.serializers.output import ResponseMessage
 
 query = Query()
 router = APIRouter(prefix="/api/v1/images", tags=["images"])

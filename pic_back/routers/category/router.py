@@ -7,12 +7,13 @@ from tinydb import Query
 from tinydb.table import Document
 
 from pic_back.db import CollectionName, CollectionProvider
-from pic_back.db.utils import CategoryExistsException, DbCategoriesOperations
+from pic_back.db.utils import CategoryExistsException, CategoryNotFoundException, DbCategoriesOperations
 from pic_back.models import AuthenticatedUser, Category
 from pic_back.routers.auth.utils import get_current_user
-from pic_back.routers.category.exceptions import CategoryExistsHTTPException, CategoryNotFound
+from pic_back.routers.category.exceptions import CategoryExistsHTTPException, CategoryNotFoundHTTPException
 from pic_back.routers.category.serializers.input import UpdateCategoryInputSerializer
 from pic_back.routers.category.serializers.output import ImagesFromCategoryOutputSerializer, ImageToShow
+from pic_back.routers.shared.serializers.output import ResponseMessage
 from pic_back.services import GoogleDriveImageUrlGenerator
 from pic_back.settings import get_settings
 
@@ -23,9 +24,19 @@ config = get_settings()
 
 
 @router.get("", response_model=List[Category], status_code=status.HTTP_200_OK)
-async def list_categories() -> JSONResponse:
-    categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
-    return JSONResponse(content=categories_db.all())
+async def list_categories() -> List[Category]:
+    return DbCategoriesOperations.get_all()
+
+
+@router.post("", response_model=ResponseMessage, status_code=status.HTTP_201_CREATED)
+async def create_category(
+    new_category: Category, user: AuthenticatedUser = Depends(get_current_user)
+) -> ResponseMessage:
+    try:
+        DbCategoriesOperations.create(new_category)
+    except CategoryExistsException:
+        raise CategoryExistsHTTPException(name=new_category.name)
+    return ResponseMessage(detail=f"Category '{new_category.name}' has been created successfuly.")
 
 
 @router.get("/{category_name}", response_model=ImagesFromCategoryOutputSerializer)
@@ -39,7 +50,7 @@ async def get_images_from_category(
     """
     categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
     if not categories_db.get(query.name == category_name):
-        raise CategoryNotFound(name=category_name)
+        raise CategoryNotFoundHTTPException(name=category_name)
 
     images_db = CollectionProvider.provide(CollectionName.IMAGES)
     images_from_category = images_db.search(query.categories.any(query.name == category_name))
@@ -82,28 +93,17 @@ async def get_images_from_category(
     return JSONResponse(content=serialized_response.model_dump(), status_code=status.HTTP_200_OK)
 
 
-@router.post("")
-async def create_category(new_category: Category, user: AuthenticatedUser = Depends(get_current_user)) -> JSONResponse:
-    try:
-        DbCategoriesOperations.insert(new_category)
-    except CategoryExistsException:
-        raise CategoryExistsHTTPException(name=new_category.name)
-    return JSONResponse(
-        content={"detail": f"Category '{new_category.name}' has been created successfuly."},
-        status_code=status.HTTP_201_CREATED,
-    )
-
-
 @router.delete("/{category_name}")
 async def delete_category(category_name: str, user: AuthenticatedUser = Depends(get_current_user)) -> Response:
     """
     Delete category from 'categories' collection
     and then delete it from every image that contains this category ('images' collection)
     """
-    categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
-    removed_categories: Optional[Document] = categories_db.remove(query.name == category_name)
-    if not removed_categories:
-        raise CategoryNotFound(name=category_name)
+    try:
+        DbCategoriesOperations.delete(category_name)
+    except CategoryNotFoundException:
+        raise CategoryNotFoundHTTPException(name=category_name)
+
     images_db = CollectionProvider.provide(CollectionName.IMAGES)
     images = images_db.search(query.categories.any(query.name == category_name))
     for image in images:
@@ -123,7 +123,7 @@ async def update_category(
     categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
     category: Optional[Document] = categories_db.get(query.name == category_to_update.old_name)
     if not category:
-        raise CategoryNotFound(name=category_to_update.old_name)
+        raise CategoryNotFoundHTTPException(name=category_to_update.old_name)
     new_category = Category(name=category_to_update.new_name).dict()
     categories_db.update(new_category, doc_ids=[category.doc_id])
 
