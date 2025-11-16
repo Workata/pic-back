@@ -1,4 +1,4 @@
-from pic_back.models import ResponseMessage
+from pic_back.routers.shared.serializers.output import ResponseMessage
 
 
 def test_fields():

@@ -17,9 +17,9 @@ def set_env():
     get_settings.cache_clear()
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def clear_db(set_env):
-    """clear all test collections before tests execute"""
+    """clear all test collections before executing a test function"""
     for collection_name in CollectionName:
         db = CollectionProvider.provide(collection_name)
         db.truncate()
