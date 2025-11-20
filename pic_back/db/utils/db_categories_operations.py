@@ -1,7 +1,7 @@
 from typing import List
 
 from pydantic import TypeAdapter
-from tinydb import Query
+from tinydb import Query, TinyDB
 
 from pic_back.db import CollectionName, CollectionProvider
 from pic_back.models import Category
@@ -22,40 +22,50 @@ class CategoryNotFoundException(DbCategoriesException):
 
 
 class DbCategoriesOperations:
-    @staticmethod
-    def delete(category_name: str) -> List[int]:
-        categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
+    @classmethod
+    def delete(cls, category_name: str) -> List[int]:
+        categories_db = cls._get_categories_db()
         removed_categories_ids: List[int] = categories_db.remove(query.name == category_name)
         if not removed_categories_ids:
             raise CategoryNotFoundException
         return removed_categories_ids
 
-    @staticmethod
-    def get_all() -> List[Category]:
+    @classmethod
+    def exists(cls, category_name: str) -> bool:
+        categories_db = cls._get_categories_db()
+        exists: bool = categories_db.contains(query.name == category_name)
+        return exists
+
+    @classmethod
+    def get_all(cls) -> List[Category]:
         adapter = TypeAdapter(list[Category])
-        categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
+        categories_db = cls._get_categories_db()
         return adapter.validate_python(categories_db.all())
 
-    @staticmethod
-    def get(category_name: str) -> Category:
-        categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
+    @classmethod
+    def get(cls, category_name: str) -> Category:
+        categories_db = cls._get_categories_db()
         category = categories_db.get(query.name == category_name)
         if not category:
             raise CategoryNotFoundException
         return Category(**category)
 
-    @staticmethod
-    def get_or_create(category: Category) -> Category:
-        categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
+    @classmethod
+    def get_or_create(cls, category: Category) -> Category:
+        categories_db = cls._get_categories_db()
         if categories_db.get(query.name == category.name):
             return category
         categories_db.insert(category.model_dump())
         return category
 
-    @staticmethod
-    def create(category: Category) -> Category:
-        categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
+    @classmethod
+    def create(cls, category: Category) -> Category:
+        categories_db = cls._get_categories_db()
         if categories_db.get(query.name == category.name):
             raise CategoryExistsException
         categories_db.insert(category.model_dump())
         return category
+
+    @staticmethod
+    def _get_categories_db() -> TinyDB:
+        return CollectionProvider.provide(CollectionName.CATEGORIES)

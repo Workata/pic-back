@@ -40,3 +40,8 @@ def test_user() -> User:
 def access_token(test_user):
     """create access token for previously created test user"""
     return create_access_token(data={"username": test_user.username})
+
+
+@pytest.fixture
+def categories_db():
+    return CollectionProvider.provide(CollectionName.CATEGORIES)

@@ -12,28 +12,19 @@ from pic_back.settings import get_settings
 
 settings = get_settings()
 
-print(settings.google_api_key)
-
-# If modifying these scopes, delete the file token.json.
+# if modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly", "https://www.googleapis.com/auth/drive.file"]
-
 ROOT_FOLDER = "1Q3AAZ7wW-I7vG0ONIW_o0vWnHEJv8Ckm"
 
-"""
-query:
-mimeType='image/jpeg'
-'{ROOT_FOLDER}' in parents
-"""
 
-# import webbrowser
-# urL='https://www.google.com'
-# chrome_path="C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-# webbrowser.register('chrome', None,webbrowser.BackgroundBrowser(chrome_path))
+def generate_google_api_credentials() -> None:  # pragma: no cover
+    """
+    User or generate credentials and make a request
 
-
-def main() -> None:
-    """Shows basic usage of the Drive v3 API.
+    Shows basic usage of the Drive v3 API.
     Prints the names and ids of the first 10 files the user has access to.
+
+    Example query: mimeType='image/jpeg' '{ROOT_FOLDER}' in parents
     """
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
@@ -79,4 +70,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    generate_google_api_credentials()

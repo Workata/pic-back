@@ -16,6 +16,7 @@ dump
 *.log
 private
 data
+!data/token.json
 
 docker-compose.yml
 Dockerfile

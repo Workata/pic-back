@@ -44,12 +44,11 @@ async def get_images_from_category(
     category_name: str, request: Request, page: int = 0, page_size: int = config.default_page_size
 ) -> JSONResponse:
     """
-    Get images belonging to given category
-    Paginated
+    Get images belonging to given category (paginated)
+
     TODO page, page_size validation
     """
-    categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
-    if not categories_db.get(query.name == category_name):
+    if not DbCategoriesOperations.exists(category_name):
         raise CategoryNotFoundHTTPException(name=category_name)
 
     images_db = CollectionProvider.provide(CollectionName.IMAGES)

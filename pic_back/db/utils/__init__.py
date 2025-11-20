@@ -1,2 +1,2 @@
-from .categories import CategoryExistsException, CategoryNotFoundException, DbCategoriesOperations
+from .db_categories_operations import CategoryExistsException, CategoryNotFoundException, DbCategoriesOperations
 from .images import DbImagesOperations
