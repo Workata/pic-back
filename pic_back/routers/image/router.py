@@ -11,9 +11,11 @@ from pic_back.routers.auth.utils import get_current_user
 from pic_back.routers.image.exceptions import ImageNotFound
 from pic_back.routers.image.serializers.input import CommentInputSerializer
 from pic_back.routers.shared.serializers.output import ResponseMessage
+from pic_back.settings import get_settings
 
+settings = get_settings()
 query = Query()
-router = APIRouter(prefix="/api/v1/images", tags=["images"])
+router = APIRouter(prefix=f"{settings.global_api_prefix}/images", tags=["images"])
 
 
 @router.get("/{img_id}", response_model=Image)

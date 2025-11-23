@@ -18,6 +18,7 @@ class EnvType(str, Enum):
 class Settings(BaseSettings):
     environment: EnvType = Field(default=EnvType.LOCAL, validation_alias=AliasChoices("environment", "env"))
     database_base_path: Path = Path("./data/database")
+    global_api_prefix: str = "/api/v1"
 
     google_client_id: str
     google_api_key: str

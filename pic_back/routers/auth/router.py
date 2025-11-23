@@ -12,7 +12,7 @@ from pic_back.routers.auth.utils import create_access_token
 from pic_back.settings import get_settings
 
 settings = get_settings()
-router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
+router = APIRouter(prefix=f"{settings.global_api_prefix}/auth", tags=["auth"])
 
 
 @router.post("/login")

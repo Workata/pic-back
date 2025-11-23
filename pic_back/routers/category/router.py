@@ -7,7 +7,7 @@ from tinydb import Query
 from tinydb.table import Document
 
 from pic_back.db import CollectionName, CollectionProvider
-from pic_back.db.utils import CategoryExistsException, CategoryNotFoundException, DbCategoriesOperations
+from pic_back.db.utils import CategoriesDbOperations, CategoryExistsException, CategoryNotFoundException
 from pic_back.models import AuthenticatedUser, Category
 from pic_back.routers.auth.utils import get_current_user
 from pic_back.routers.category.exceptions import CategoryExistsHTTPException, CategoryNotFoundHTTPException
@@ -25,7 +25,7 @@ config = get_settings()
 
 @router.get("", response_model=List[Category], status_code=status.HTTP_200_OK)
 async def list_categories() -> List[Category]:
-    return DbCategoriesOperations.get_all()
+    return CategoriesDbOperations.get_all()
 
 
 @router.post("", response_model=ResponseMessage, status_code=status.HTTP_201_CREATED)
@@ -33,7 +33,7 @@ async def create_category(
     new_category: Category, user: AuthenticatedUser = Depends(get_current_user)
 ) -> ResponseMessage:
     try:
-        DbCategoriesOperations.create(new_category)
+        CategoriesDbOperations.create(new_category)
     except CategoryExistsException:
         raise CategoryExistsHTTPException(name=new_category.name)
     return ResponseMessage(detail=f"Category '{new_category.name}' has been created successfuly.")
@@ -48,7 +48,7 @@ async def get_images_from_category(
 
     TODO page, page_size validation
     """
-    if not DbCategoriesOperations.exists(category_name):
+    if not CategoriesDbOperations.exists(category_name):
         raise CategoryNotFoundHTTPException(name=category_name)
 
     images_db = CollectionProvider.provide(CollectionName.IMAGES)
@@ -99,7 +99,7 @@ async def delete_category(category_name: str, user: AuthenticatedUser = Depends(
     and then delete it from every image that contains this category ('images' collection)
     """
     try:
-        DbCategoriesOperations.delete(category_name)
+        CategoriesDbOperations.delete(category_name)
     except CategoryNotFoundException:
         raise CategoryNotFoundHTTPException(name=category_name)
 

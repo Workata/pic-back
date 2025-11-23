@@ -27,6 +27,11 @@ logging.config.dictConfig(LOGGING_CONFIG)
 app = FastAPI(lifespan=lifespan)
 
 
+@app.get("/")
+def healthcheck() -> t.Dict[str, str]:
+    return {"Status": "OK!"}
+
+
 app.include_router(category_router)
 app.include_router(map_router)
 app.include_router(gdrive_router)

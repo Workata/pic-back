@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 
 
-class MarkerExists(HTTPException):
+class MarkerExistsHTTPException(HTTPException):
     def __init__(self, lat: float, lon: float) -> None:
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,

@@ -2,7 +2,7 @@ from fastapi import status
 from fastapi.testclient import TestClient
 from tinydb import Query
 
-from pic_back.db.utils import DbCategoriesOperations
+from pic_back.db.utils import CategoriesDbOperations
 from pic_back.main import app
 from pic_back.models import Category
 
@@ -17,7 +17,7 @@ categories_router_base_path = "/api/v1/categories"
 def test_list_categories():
     existing_categories = [Category(name="cars"), Category(name="cats"), Category(name="birds")]
     for category in existing_categories:
-        DbCategoriesOperations.create(category)
+        CategoriesDbOperations.create(category)
     expected_res_data = [category.model_dump() for category in existing_categories]
 
     res = client.get(categories_router_base_path)
