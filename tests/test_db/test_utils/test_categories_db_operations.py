@@ -1,7 +1,11 @@
 import pytest
 from tinydb import Query
 
-from pic_back.db.utils.categories_db_operations import CategoriesDbOperations, CategoryNotFoundException
+from pic_back.db.utils.categories_db_operations import (
+    CategoriesDbOperations,
+    CategoryExistsException,
+    CategoryNotFoundException,
+)
 from pic_back.models import Category
 
 query = Query()
@@ -49,7 +53,7 @@ def test_get_all(categories_db):
     names = ["cars", "cats", "dogs"]
     categories = [Category(name=name) for name in names]
     [categories_db.insert(category.model_dump()) for category in categories]
-    assert categories_db.count(query.name.matches(r".*")) == 3
+    assert len(categories_db.all()) == 3
 
     res = CategoriesDbOperations.get_all()
 
@@ -62,7 +66,7 @@ def test_get_when_category_exists(categories_db):
     names = ["cars", "cats", "dogs"]
     categories = [Category(name=name) for name in names]
     [categories_db.insert(category.model_dump()) for category in categories]
-    assert categories_db.count(query.name.matches(r".*")) == 3
+    assert len(categories_db.all()) == 3
 
     res = CategoriesDbOperations.get(category_name="cats")
 
@@ -73,7 +77,7 @@ def test_get_when_category_doesnt_exist(categories_db):
     names = ["cars", "cats", "dogs"]
     categories = [Category(name=name) for name in names]
     [categories_db.insert(category.model_dump()) for category in categories]
-    assert categories_db.count(query.name.matches(r".*")) == 3
+    assert len(categories_db.all()) == 3
 
     with pytest.raises(CategoryNotFoundException):
         CategoriesDbOperations.get(category_name="flowers")
@@ -84,7 +88,7 @@ def test_get_or_create_when_category_exists(categories_db):
     category = Category(name="cats")
     categories = [Category(name=name) for name in names]
     [categories_db.insert(category.model_dump()) for category in categories]
-    assert categories_db.count(query.name.matches(r".*")) == 3
+    assert len(categories_db.all()) == 3
 
     res = CategoriesDbOperations.get_or_create(category)
 
@@ -102,3 +106,27 @@ def test_get_or_create_when_category_doesnt_exist(categories_db):
 
     assert res == category
     assert categories_db.contains(query.name == category.name) is True
+
+
+def test_create_when_category_exists(categories_db):
+    names = ["cars", "cats", "dogs"]
+    category = Category(name="cats")
+    categories = [Category(name=name) for name in names]
+    [categories_db.insert(category.model_dump()) for category in categories]
+    assert len(categories_db.all()) == 3
+
+    with pytest.raises(CategoryExistsException):
+        CategoriesDbOperations.create(category)
+
+
+def test_create_when_category_doesnt_exist(categories_db):
+    names = ["cars", "dogs"]
+    category = Category(name="cats")
+    categories = [Category(name=name) for name in names]
+    [categories_db.insert(category.model_dump()) for category in categories]
+    assert len(categories_db.all()) == 2
+
+    res = CategoriesDbOperations.create(category)
+
+    assert res == category
+    assert len(categories_db.all()) == 3

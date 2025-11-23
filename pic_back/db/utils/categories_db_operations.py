@@ -24,6 +24,10 @@ class CategoryNotFoundException(DbCategoriesException):
 
 
 class CategoriesDbOperations(DbOperations):
+    """
+    Unique: name
+    """
+
     @classmethod
     def delete(cls, category_name: str) -> List[int]:
         db = cls._get_db()
