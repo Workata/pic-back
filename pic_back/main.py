@@ -9,7 +9,7 @@ from fastapi_utils.tasks import repeat_every
 
 from pic_back.routers import auth_router, category_router, gdrive_router, image_router, map_router
 from pic_back.services.backup import BackupMakerFactory
-from pic_back.settings import LOGGING_CONFIG, get_settings
+from pic_back.settings import LOGGING_CONFIG, EnvType, get_settings
 
 
 @asynccontextmanager
@@ -25,6 +25,8 @@ settings = get_settings()
 logging.config.dictConfig(LOGGING_CONFIG)
 
 app = FastAPI(lifespan=lifespan)
+
+logger = logging.getLogger(name="main")
 
 
 @app.get("/")
@@ -49,12 +51,9 @@ app.add_middleware(
 )
 
 
-backup_maker = BackupMakerFactory.create()
-
-
 @repeat_every(seconds=60 * 60 * 24)
 async def backup_task() -> None:
-    if settings.environment == "dev":
-        print("Backup omitted - dev env")
-        return
-    backup_maker.make()
+    if settings.environment != EnvType.PROD:
+        logger.info(f"Backup omitted - not prod. Current env: {settings.environment}")
+        return None
+    BackupMakerFactory.create().make()
