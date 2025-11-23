@@ -45,3 +45,18 @@ def access_token(test_user):
 @pytest.fixture
 def categories_db():
     return CollectionProvider.provide(CollectionName.CATEGORIES)
+
+
+@pytest.fixture
+def images_db():
+    return CollectionProvider.provide(CollectionName.IMAGES)
+
+
+@pytest.fixture
+def markers_db():
+    return CollectionProvider.provide(CollectionName.MARKERS)
+
+
+@pytest.fixture
+def users_db():
+    return CollectionProvider.provide(CollectionName.USERS)

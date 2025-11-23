@@ -1,3 +1,4 @@
 from .categories_db_operations import CategoriesDbOperations, CategoryExistsException, CategoryNotFoundException
 from .images_db_operations import ImagesDbOperations
 from .markers_db_operations import MarkerExistsException, MarkersDbOperations
+from .users_db_operations import UserExistsException, UserNotFoundException, UsersDbOperations

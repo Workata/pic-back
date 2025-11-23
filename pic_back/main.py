@@ -21,12 +21,11 @@ async def lifespan(app: FastAPI) -> t.Any:
     yield
 
 
-settings = get_settings()
 logging.config.dictConfig(LOGGING_CONFIG)
 
-app = FastAPI(lifespan=lifespan)
-
+settings = get_settings()
 logger = logging.getLogger(name="main")
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")

@@ -22,7 +22,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "assertpy==1.1",
     "mypy==1.18.2",
     "pre-commit==4.4.0",
     "pytest==8.4.2",

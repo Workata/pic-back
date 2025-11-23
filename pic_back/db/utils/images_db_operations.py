@@ -16,6 +16,10 @@ class ImageExistsException(DbImagesException):
     pass
 
 
+class ImageNotFoundException(DbImagesException):
+    pass
+
+
 class ImagesDbOperations(DbOperations):
     @classmethod
     def create(cls, image: Image) -> Image:

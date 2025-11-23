@@ -1,7 +1,7 @@
 from typing import List, Protocol
 
 
-class DbOperations(Protocol):
+class DbOperations(Protocol):  # pragma: no cover
     @classmethod
     def delete(cls, category_name: str) -> List[int]:
         pass
@@ -9,7 +9,3 @@ class DbOperations(Protocol):
     @classmethod
     def exists(cls, category_name: str) -> bool:
         pass
-
-    # @classmethod
-    # def get_all(cls) -> List[BaseModel]:
-    #     pass

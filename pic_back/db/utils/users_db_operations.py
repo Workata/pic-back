@@ -6,24 +6,28 @@ from pic_back.models import User
 query = Query()
 
 
-class DbCategoriesException(Exception):
+class DbUsersException(Exception):
     pass
 
 
-class CategoryExistsException(DbCategoriesException):
+class UserExistsException(DbUsersException):
     pass
 
 
-class CategoryNotFoundException(DbCategoriesException):
+class UserNotFoundException(DbUsersException):
     pass
 
 
 class UsersDbOperations:
+    """
+    Unique: username
+    """
+
     @classmethod
     def create(cls, user: User) -> User:
         db = cls._get_db()
         if db.get(query.username == user.username):
-            raise CategoryExistsException
+            raise UserExistsException
         db.insert(user.model_dump())
         return user
 
