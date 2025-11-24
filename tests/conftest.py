@@ -1,12 +1,14 @@
 import os
 
 import pytest
-from tinydb import where
+from fastapi.testclient import TestClient
+from tinydb import TinyDB, where
 
 from pic_back.db import CollectionName, CollectionProvider
+from pic_back.main import app
 from pic_back.models import User
 from pic_back.routers.auth.utils import create_access_token
-from pic_back.settings import get_settings
+from pic_back.settings import Settings, get_settings
 from pic_back.utils.create_user import create_user
 
 
@@ -26,10 +28,18 @@ def clear_db(set_env):
 
 
 @pytest.fixture
-def test_user() -> User:
+def test_user_username() -> str:
+    return "workata"
+
+
+@pytest.fixture
+def test_user_password() -> str:
+    return "123456"
+
+
+@pytest.fixture
+def test_user(test_user_username, test_user_password) -> User:
     """create test user (admin)"""
-    test_user_username = "test_user"
-    test_user_password = "12"
     users_db = CollectionProvider.provide(CollectionName.USERS)
     if user := users_db.get(where("username") == "test_user"):
         return User(**user)
@@ -43,20 +53,30 @@ def access_token(test_user):
 
 
 @pytest.fixture
-def categories_db():
+def categories_db() -> TinyDB:
     return CollectionProvider.provide(CollectionName.CATEGORIES)
 
 
 @pytest.fixture
-def images_db():
+def images_db() -> TinyDB:
     return CollectionProvider.provide(CollectionName.IMAGES)
 
 
 @pytest.fixture
-def markers_db():
+def markers_db() -> TinyDB:
     return CollectionProvider.provide(CollectionName.MARKERS)
 
 
 @pytest.fixture
-def users_db():
+def users_db() -> TinyDB:
     return CollectionProvider.provide(CollectionName.USERS)
+
+
+@pytest.fixture
+def client() -> TestClient:
+    return TestClient(app)
+
+
+@pytest.fixture
+def settings() -> Settings:
+    return get_settings()

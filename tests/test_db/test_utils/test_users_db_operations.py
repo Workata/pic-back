@@ -1,7 +1,7 @@
 import pytest
 from tinydb import Query
 
-from pic_back.db.utils.users_db_operations import UserExistsException, UsersDbOperations
+from pic_back.db.utils.users_db_operations import UserExistsException, UserNotFoundException, UsersDbOperations
 from pic_back.models import User
 
 query = Query()
@@ -24,3 +24,21 @@ def test_create_when_user_doesnt_exist(users_db):
 
     assert res == user
     assert len(users_db.all()) == 1
+
+
+def test_get_when_user_exists(users_db):
+    username = "workata"
+    user = User(username=username, hashed_password="12312!@#1231241241!@")
+    users_db.insert(user.model_dump())
+    assert len(users_db.all()) == 1
+
+    user = UsersDbOperations.get(username)
+
+    assert user.username == username
+
+
+def test_get_when_user_doesnt_exist_should_result_in_exception(users_db):
+    username = "workata"
+
+    with pytest.raises(UserNotFoundException):
+        UsersDbOperations.get(username)

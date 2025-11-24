@@ -31,6 +31,14 @@ class UsersDbOperations:
         db.insert(user.model_dump())
         return user
 
+    @classmethod
+    def get(cls, username: str) -> User:
+        db = cls._get_db()
+        user = db.get(query.username == username)
+        if user is None:
+            raise UserNotFoundException
+        return User(**user)
+
     @staticmethod
     def _get_db() -> TinyDB:
         return CollectionProvider.provide(CollectionName.USERS)
