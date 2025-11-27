@@ -1,7 +1,7 @@
 import pytest
 from tinydb import Query
 
-from pic_back.db.utils.images_db_operations import ImageExistsException, ImagesDbOperations
+from pic_back.db.utils.images_db_operations import ImageExistsException, ImageNotFoundException, ImagesDbOperations
 from pic_back.models import Image
 
 query = Query()
@@ -24,3 +24,21 @@ def test_create_when_image_doesnt_exist(images_db):
 
     assert res == image
     assert len(images_db.all()) == 1
+
+
+def test_get_when_image_exists(images_db):
+    img_id = "0123-123"
+    image = Image(id=img_id, name="image.jpg")
+    images_db.insert(image.model_dump())
+
+    res = ImagesDbOperations.get(img_id)
+
+    assert res == image
+
+
+def test_get_when_image_doesnt_exist(images_db):
+    img_id = "0123-123"
+    assert len(images_db.all()) == 0
+
+    with pytest.raises(ImageNotFoundException):
+        ImagesDbOperations.get(img_id)

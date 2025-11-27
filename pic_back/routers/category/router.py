@@ -1,10 +1,9 @@
 import math
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, Depends, Request, status
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import Response
 from tinydb import Query
-from tinydb.table import Document
 
 from pic_back.db import CollectionName, CollectionProvider
 from pic_back.db.utils import CategoriesDbOperations, CategoryExistsException, CategoryNotFoundException
@@ -58,13 +57,14 @@ async def delete_category(category_name: str, user: AuthenticatedUser = Depends(
     return ResponseMessage(detail=f"Category '{category_name}' has been deleted successfuly")
 
 
-@router.get("/{category_name}", response_model=ImagesFromCategoryOutputSerializer)
+@router.get("/{category_name}", response_model=ImagesFromCategoryOutputSerializer, status_code=status.HTTP_200_OK)
 async def get_images_from_category(
     category_name: str, request: Request, page: int = 0, page_size: int = config.default_page_size
-) -> JSONResponse:
+) -> ImagesFromCategoryOutputSerializer:
     """
     Get images belonging to given category (paginated)
 
+    TODO move to images router
     TODO page, page_size validation
     """
     if not CategoriesDbOperations.exists(category_name):
@@ -97,7 +97,7 @@ async def get_images_from_category(
     previous_page_link = f"{endpoint_url}?page={previous_page}" if previous_page is not None else None
     next_page = page + 1 if page < total_number_of_pages - 1 else None
     next_page_link = f"{endpoint_url}?page={next_page}" if next_page is not None else None
-    serialized_response = ImagesFromCategoryOutputSerializer(
+    return ImagesFromCategoryOutputSerializer(
         images=images,
         previous_page_link=previous_page_link,
         next_page_link=next_page_link,
@@ -108,30 +108,28 @@ async def get_images_from_category(
         next_page=next_page,
         page_size=page_size,
     )
-    return JSONResponse(content=serialized_response.model_dump(), status_code=status.HTTP_200_OK)
 
 
-@router.patch("")
+@router.patch("", status_code=status.HTTP_204_NO_CONTENT)
 async def update_category(
-    category_to_update: UpdateCategoryInputSerializer, user: AuthenticatedUser = Depends(get_current_user)
+    update_category_input: UpdateCategoryInputSerializer, user: AuthenticatedUser = Depends(get_current_user)
 ) -> Response:
     """
     Update category in 'categories' collection
     and then update it in every image that contains this category ('images' collection)
     """
-    categories_db = CollectionProvider.provide(CollectionName.CATEGORIES)
-    category: Optional[Document] = categories_db.get(query.name == category_to_update.old_name)
-    if not category:
-        raise CategoryNotFoundHTTPException(name=category_to_update.old_name)
-    new_category = Category(name=category_to_update.new_name).model_dump()
-    categories_db.update(new_category, doc_ids=[category.doc_id])
+    if CategoriesDbOperations.exists(category_name=update_category_input.old_name) is False:
+        raise CategoryNotFoundHTTPException(name=update_category_input.old_name)
+
+    new_category = Category(name=update_category_input.new_name).model_dump()
+    CategoriesDbOperations.update(old_name=update_category_input.old_name, new_name=update_category_input.new_name)
 
     images_db = CollectionProvider.provide(CollectionName.IMAGES)
-    images = images_db.search(query.categories.any(query.name == category_to_update.old_name))
+    images = images_db.search(query.categories.any(query.name == update_category_input.old_name))
     for image in images:
         # TODO this can be probably done with one operation
         updated_categories = list(
-            filter(lambda item: item["name"] != category_to_update.old_name, image["categories"])
+            filter(lambda item: item["name"] != update_category_input.old_name, image["categories"])
         )  # delete old category
         updated_categories.append(new_category)  # append updated one
         images_db.update({"categories": updated_categories}, doc_ids=[image.doc_id])

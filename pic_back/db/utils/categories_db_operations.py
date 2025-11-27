@@ -30,7 +30,7 @@ class CategoriesDbOperations(DbOperations):
 
     @classmethod
     def delete(cls, category_name: str) -> List[int]:
-        db = cls._get_db()
+        db = cls.get_db()
         removed_categories_ids: List[int] = db.remove(query.name == category_name)
         if not removed_categories_ids:
             raise CategoryNotFoundException
@@ -38,22 +38,27 @@ class CategoriesDbOperations(DbOperations):
 
     @classmethod
     def exists(cls, category_name: str) -> bool:
-        db = cls._get_db()
+        db = cls.get_db()
         exists: bool = db.contains(query.name == category_name)
         return exists
 
     @classmethod
     def get(cls, category_name: str) -> Category:
-        db = cls._get_db()
+        db = cls.get_db()
         category = db.get(query.name == category_name)
         if not category:
             raise CategoryNotFoundException
         return Category(**category)
 
     @classmethod
+    def update(cls, old_name: str, new_name: str) -> None:
+        db = cls.get_db()
+        db.update({"name": new_name}, query.name == old_name)
+
+    @classmethod
     def get_all(cls) -> List[Category]:
         adapter = TypeAdapter(list[Category])
-        db = cls._get_db()
+        db = cls.get_db()
         return adapter.validate_python(db.all())
 
     @classmethod
@@ -62,7 +67,7 @@ class CategoriesDbOperations(DbOperations):
 
     @classmethod
     def get_or_create(cls, category: Category) -> Category:
-        db = cls._get_db()
+        db = cls.get_db()
         if db.get(query.name == category.name):
             return category
         db.insert(category.model_dump())
@@ -70,12 +75,12 @@ class CategoriesDbOperations(DbOperations):
 
     @classmethod
     def create(cls, category: Category) -> Category:
-        db = cls._get_db()
+        db = cls.get_db()
         if db.get(query.name == category.name):
             raise CategoryExistsException
         db.insert(category.model_dump())
         return category
 
     @staticmethod
-    def _get_db() -> TinyDB:
+    def get_db() -> TinyDB:
         return CollectionProvider.provide(CollectionName.CATEGORIES)
