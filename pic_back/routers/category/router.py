@@ -36,7 +36,26 @@ async def create_category(
         CategoriesDbOperations.create(new_category)
     except CategoryExistsException:
         raise CategoryExistsHTTPException(name=new_category.name)
-    return ResponseMessage(detail=f"Category '{new_category.name}' has been created successfuly.")
+    return ResponseMessage(detail=f"Category '{new_category.name}' has been created successfuly")
+
+
+@router.delete("/{category_name}", response_model=ResponseMessage, status_code=status.HTTP_200_OK)
+async def delete_category(category_name: str, user: AuthenticatedUser = Depends(get_current_user)) -> ResponseMessage:
+    """
+    Delete category from 'categories' collection
+    and then delete it from every image that contains this category ('images' collection)
+    """
+    try:
+        CategoriesDbOperations.delete(category_name)
+    except CategoryNotFoundException:
+        raise CategoryNotFoundHTTPException(name=category_name)
+
+    images_db = CollectionProvider.provide(CollectionName.IMAGES)
+    images = images_db.search(query.categories.any(query.name == category_name))
+    for image in images:
+        updated_categories = list(filter(lambda item: item["name"] != category_name, image["categories"]))
+        images_db.update({"categories": updated_categories}, doc_ids=[image.doc_id])
+    return ResponseMessage(detail=f"Category '{category_name}' has been deleted successfuly")
 
 
 @router.get("/{category_name}", response_model=ImagesFromCategoryOutputSerializer)
@@ -92,25 +111,6 @@ async def get_images_from_category(
     return JSONResponse(content=serialized_response.model_dump(), status_code=status.HTTP_200_OK)
 
 
-@router.delete("/{category_name}")
-async def delete_category(category_name: str, user: AuthenticatedUser = Depends(get_current_user)) -> Response:
-    """
-    Delete category from 'categories' collection
-    and then delete it from every image that contains this category ('images' collection)
-    """
-    try:
-        CategoriesDbOperations.delete(category_name)
-    except CategoryNotFoundException:
-        raise CategoryNotFoundHTTPException(name=category_name)
-
-    images_db = CollectionProvider.provide(CollectionName.IMAGES)
-    images = images_db.search(query.categories.any(query.name == category_name))
-    for image in images:
-        updated_categories = list(filter(lambda item: item["name"] != category_name, image["categories"]))
-        images_db.update({"categories": updated_categories}, doc_ids=[image.doc_id])
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
 @router.patch("")
 async def update_category(
     category_to_update: UpdateCategoryInputSerializer, user: AuthenticatedUser = Depends(get_current_user)
@@ -123,7 +123,7 @@ async def update_category(
     category: Optional[Document] = categories_db.get(query.name == category_to_update.old_name)
     if not category:
         raise CategoryNotFoundHTTPException(name=category_to_update.old_name)
-    new_category = Category(name=category_to_update.new_name).dict()
+    new_category = Category(name=category_to_update.new_name).model_dump()
     categories_db.update(new_category, doc_ids=[category.doc_id])
 
     images_db = CollectionProvider.provide(CollectionName.IMAGES)

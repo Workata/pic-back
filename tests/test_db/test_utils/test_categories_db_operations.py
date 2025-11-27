@@ -130,3 +130,14 @@ def test_create_when_category_doesnt_exist(categories_db):
 
     assert res == category
     assert len(categories_db.all()) == 3
+
+
+def test_count_all(categories_db):
+    names = ["cars", "cats", "dogs"]
+    categories = [Category(name=name) for name in names]
+    [categories_db.insert(category.model_dump()) for category in categories]
+
+    res = CategoriesDbOperations.count_all()
+
+    assert type(res) is int
+    assert res == len(names)

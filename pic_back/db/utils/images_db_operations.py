@@ -29,6 +29,14 @@ class ImagesDbOperations(DbOperations):
         images_db.insert(image.model_dump())
         return image
 
+    @classmethod
+    def get(cls, img_id: str) -> Image:
+        db = cls._get_db()
+        image = db.get(query.id == img_id)
+        if not image:
+            raise ImageNotFoundException
+        return Image(**image)
+
     @staticmethod
     def _get_db() -> TinyDB:
         return CollectionProvider.provide(CollectionName.IMAGES)

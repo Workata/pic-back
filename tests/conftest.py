@@ -1,4 +1,5 @@
 import os
+from typing import Dict
 
 import pytest
 from fastapi.testclient import TestClient
@@ -47,9 +48,14 @@ def test_user(test_user_username, test_user_password) -> User:
 
 
 @pytest.fixture
-def access_token(test_user):
+def access_token(test_user) -> str:
     """create access token for previously created test user"""
     return create_access_token(data={"username": test_user.username})
+
+
+@pytest.fixture
+def auth_headers(access_token) -> Dict[str, str]:
+    return {"Authorization": f"Bearer {access_token}"}
 
 
 @pytest.fixture

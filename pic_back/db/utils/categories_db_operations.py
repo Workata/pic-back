@@ -43,18 +43,22 @@ class CategoriesDbOperations(DbOperations):
         return exists
 
     @classmethod
-    def get_all(cls) -> List[Category]:
-        adapter = TypeAdapter(list[Category])
-        db = cls._get_db()
-        return adapter.validate_python(db.all())
-
-    @classmethod
     def get(cls, category_name: str) -> Category:
         db = cls._get_db()
         category = db.get(query.name == category_name)
         if not category:
             raise CategoryNotFoundException
         return Category(**category)
+
+    @classmethod
+    def get_all(cls) -> List[Category]:
+        adapter = TypeAdapter(list[Category])
+        db = cls._get_db()
+        return adapter.validate_python(db.all())
+
+    @classmethod
+    def count_all(cls) -> int:
+        return len(cls.get_all())
 
     @classmethod
     def get_or_create(cls, category: Category) -> Category:

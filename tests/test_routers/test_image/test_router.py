@@ -18,7 +18,7 @@ def test_update_image_categories_endpoint_with_unathenticated_user_should_return
     assert res.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_add_single_category_to_image_with_authenticated_user_should_return_200(access_token):
+def test_add_single_category_to_image_with_authenticated_user_should_return_200(auth_headers):
     img_id = "0001-1213"
     category_name = "cars"
     ImagesDbOperations.create(Image(id=img_id, name="image.jpg"))
@@ -27,7 +27,7 @@ def test_add_single_category_to_image_with_authenticated_user_should_return_200(
     res = client.patch(
         f"/api/v1/images/{img_id}/categories",
         data=json.dumps([category_name]),
-        headers={"Authorization": f"Bearer {access_token}"},
+        headers=auth_headers,
     )
 
     assert res.status_code == status.HTTP_200_OK
