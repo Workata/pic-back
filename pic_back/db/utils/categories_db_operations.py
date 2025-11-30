@@ -43,6 +43,11 @@ class CategoriesDbOperations(DbOperations):
         return exists
 
     @classmethod
+    def update(cls, old_name: str, new_name: str) -> None:
+        db = cls.get_db()
+        db.update({"name": new_name}, query.name == old_name)
+
+    @classmethod
     def get(cls, category_name: str) -> Category:
         db = cls.get_db()
         category = db.get(query.name == category_name)
@@ -51,9 +56,12 @@ class CategoriesDbOperations(DbOperations):
         return Category(**category)
 
     @classmethod
-    def update(cls, old_name: str, new_name: str) -> None:
+    def get_or_create(cls, category: Category) -> Category:
         db = cls.get_db()
-        db.update({"name": new_name}, query.name == old_name)
+        if db.get(query.name == category.name):
+            return category
+        db.insert(category.model_dump())
+        return category
 
     @classmethod
     def get_all(cls) -> List[Category]:
@@ -64,14 +72,6 @@ class CategoriesDbOperations(DbOperations):
     @classmethod
     def count_all(cls) -> int:
         return len(cls.get_all())
-
-    @classmethod
-    def get_or_create(cls, category: Category) -> Category:
-        db = cls.get_db()
-        if db.get(query.name == category.name):
-            return category
-        db.insert(category.model_dump())
-        return category
 
     @classmethod
     def create(cls, category: Category) -> Category:

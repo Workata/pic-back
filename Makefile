@@ -11,7 +11,7 @@ test:
 .PHONY: run
 run:
 	@echo "Running fast api application..."
-	uv run fastapi dev pic_back/main.py
+	uv run uvicorn pic_back.main:app --host 0.0.0.0 --port 8000
 
 
 .PHONY: run-docker

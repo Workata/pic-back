@@ -16,8 +16,8 @@ LOGGING_CONFIG = {
         "file": {"class": "logging.FileHandler", "filename": "./logs/all.log", "formatter": "verbose"},
     },
     "loggers": {
-        "general": {
-            "handlers": ["console", "file"],
+        "root": {
+            "handlers": ["console"],
             "level": "INFO",
         }
     },

@@ -17,9 +17,10 @@ from pic_back.services import GoogleDriveImageUrlGenerator
 from pic_back.settings import get_settings
 
 query = Query()
-router_path = "api/v1/categories"
-router = APIRouter(prefix=f"/{router_path}", tags=["categories"])
-config = get_settings()
+settings = get_settings()
+# TODO verify router path "/"
+router_path = f"{settings.global_api_prefix}/categories"
+router = APIRouter(prefix=router_path, tags=["categories"])
 
 
 @router.get("", response_model=List[Category], status_code=status.HTTP_200_OK)
@@ -59,7 +60,7 @@ async def delete_category(category_name: str, user: AuthenticatedUser = Depends(
 
 @router.get("/{category_name}", response_model=ImagesFromCategoryOutputSerializer, status_code=status.HTTP_200_OK)
 async def get_images_from_category(
-    category_name: str, request: Request, page: int = 0, page_size: int = config.default_page_size
+    category_name: str, request: Request, page: int = 0, page_size: int = settings.default_page_size
 ) -> ImagesFromCategoryOutputSerializer:
     """
     Get images belonging to given category (paginated)
