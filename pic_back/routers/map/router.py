@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, status
-from fastapi.responses import JSONResponse
 from tinydb import Query
 
 from pic_back.db.utils import MarkerExistsException, MarkersDbOperations
@@ -40,11 +39,9 @@ def map_folder_task(folder_id: str) -> None:
     mapper.map_folder(folder_id)
 
 
-@router.post("/folder/{folder_id}")
+@router.post("/folder/{folder_id}", response_model=ResponseMessage, status_code=status.HTTP_201_CREATED)
 async def map_folder(
     folder_id: str, background_tasks: BackgroundTasks, user: AuthenticatedUser = Depends(get_current_user)
-) -> JSONResponse:
+) -> ResponseMessage:
     background_tasks.add_task(map_folder_task, folder_id)
-    return JSONResponse(
-        content={"info": "Folder will be mapped in the background!"}, status_code=status.HTTP_201_CREATED
-    )
+    return ResponseMessage(detail=f"Folder {folder_id} will be mapped in the background!")
