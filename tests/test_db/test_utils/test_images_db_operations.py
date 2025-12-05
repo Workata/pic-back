@@ -42,3 +42,26 @@ def test_get_when_image_doesnt_exist(images_db):
 
     with pytest.raises(ImageNotFoundDbException):
         ImagesDbOperations.get(img_id)
+
+
+def test_get_or_create_when_image_not_in_db(images_db):
+    img_id = "0123-123"
+    image = Image(id=img_id, name="image.jpg")
+    assert len(images_db.all()) == 0
+
+    res = ImagesDbOperations.get_or_create(image)
+
+    assert res == image
+    assert len(images_db.all()) == 1
+
+
+def test_get_or_create_when_image_in_db(images_db):
+    img_id = "0123-123"
+    image = Image(id=img_id, name="image.jpg")
+    images_db.insert(image.model_dump())
+    assert len(images_db.all()) == 1
+
+    res = ImagesDbOperations.get_or_create(image)
+
+    assert res == image
+    assert len(images_db.all()) == 1

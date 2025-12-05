@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, status
-from fastapi.responses import JSONResponse
 from tinydb import Query
 from tinydb.table import Document
 
@@ -35,14 +34,14 @@ async def get_or_create_image(image: Image, user: AuthenticatedUser = Depends(ge
     return ImagesDbOperations.get_or_create(image)
 
 
-@router.get("/{img_id}/categories", response_model=List[Category])
-async def get_categories_of_image(img_id: str) -> JSONResponse:
+@router.get("/{img_id}/categories", response_model=List[Category], status_code=status.HTTP_200_OK)
+async def get_image_categories(img_id: str) -> List[Category]:
     try:
         image = ImagesDbOperations.get(img_id)
     except ImageNotFoundDbException:
         raise ImageNotFoundHTTPException(img_id)
 
-    return JSONResponse(content=image.categories, status_code=status.HTTP_200_OK)
+    return image.categories
 
 
 @router.patch("/{img_id}/categories", response_model=ResponseMessage, status_code=status.HTTP_200_OK)
@@ -61,21 +60,16 @@ async def update_image_categories(
     return ResponseMessage(detail=f"Categories of img with ID '{img_id}' has been updated")
 
 
-@router.patch("/{img_id}/comment", response_model=ResponseMessage)
+@router.patch("/{img_id}/comment", response_model=ResponseMessage, status_code=status.HTTP_200_OK)
 async def update_image_comment(
-    img_id: str, comment: CommentInputSerializer, user: AuthenticatedUser = Depends(get_current_user)
-) -> JSONResponse:
-    comment_value: str = comment.comment  # TODO refactor this
+    img_id: str, input: CommentInputSerializer, user: AuthenticatedUser = Depends(get_current_user)
+) -> ResponseMessage:
+    comment: str = input.comment
     images_db = CollectionProvider.provide(CollectionName.IMAGES)
 
     image: Optional[Document] = images_db.get(query.id == img_id)
     if not image:
         raise ImageNotFoundHTTPException(img_id)
 
-    images_db.update({"comment": comment_value}, doc_ids=[image.doc_id])
-    return JSONResponse(
-        content=ResponseMessage(
-            detail=f"Comment of img with ID '{img_id}' has been updated to '{comment_value}'"
-        ).model_dump(),
-        status_code=status.HTTP_200_OK,
-    )
+    images_db.update({"comment": comment}, doc_ids=[image.doc_id])
+    return ResponseMessage(detail=f"Comment of img with ID '{img_id}' has been updated to '{comment}'")
