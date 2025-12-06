@@ -1,32 +1,33 @@
 import typing as t
+from pathlib import Path
 
 from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
+from googleapiclient import discovery
 
 from pic_back.settings import get_settings
 
-config = get_settings()
+settings = get_settings()
 
 
 class GoogleDriveDataFetcher:
     SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
     SPACES: str = "drive"
 
-    def __init__(self) -> None:
-        creds = Credentials.from_authorized_user_file("./data/token.json", self.SCOPES)
-        self.service = build("drive", "v3", credentials=creds)
+    def __init__(self, token_json_file_path: Path = Path("./data/token.json")) -> None:
+        credentials = Credentials.from_authorized_user_file(filename=token_json_file_path, scopes=self.SCOPES)
+        self._google_drive_service = discovery.build(serviceName="drive", version="v3", credentials=credentials)
 
     def query_content(
         self,
         query: str,
         fields: t.List[str],
         page_token: t.Optional[str] = None,
-        page_size: int = config.default_page_size,
+        page_size: int = settings.default_page_size,
     ) -> t.Any:
         fields_str = ", ".join(fields)
         if page_token:
             return (
-                self.service.files()
+                self._google_drive_service.files()
                 .list(
                     q=query,
                     spaces=self.SPACES,
@@ -38,7 +39,7 @@ class GoogleDriveDataFetcher:
                 .execute()
             )
         return (
-            self.service.files()
+            self._google_drive_service.files()
             .list(
                 q=query,
                 spaces=self.SPACES,

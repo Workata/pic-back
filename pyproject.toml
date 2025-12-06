@@ -1,6 +1,6 @@
 [project]
 name = "pic-back"
-version = "0.1.0"
+version = "1.0.0"
 description = "Backend for tomtol (pic-pages) application"
 readme = "README.md"
 requires-python = ">=3.14"
