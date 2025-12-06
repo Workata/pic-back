@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     database_base_path: Path = Path("./data/database")
     global_api_prefix: str = "/api/v1"
 
+    google_drive_backup_folder_id: str
+
     google_client_id: str
     google_api_key: str
 

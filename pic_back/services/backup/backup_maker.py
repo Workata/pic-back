@@ -1,40 +1,39 @@
 import datetime as dt
-import os
 import typing as t
+from pathlib import Path
+
+from pic_back.settings import get_settings
 
 
-class ZipperInterface(t.Protocol):
-    def zip(self, directory_path: str, output_file_path: str) -> None:
+class ZipperInterface(t.Protocol):  # pragma: no cover
+    def zip(self, directory_path: Path, output_file_path: Path) -> None:
         pass
 
 
-class FileUploaderInterface(t.Protocol):
-    def upload(self, file_path: str, parent_folder_id: str, uploaded_file_name: str) -> None:
+class FileUploaderInterface(t.Protocol):  # pragma: no cover
+    def upload(self, file_path: Path, parent_folder_id: str, uploaded_file_name: str) -> None:
         pass
 
 
 class BackupMaker:
-    DATA_DIR_PATH: str = r"./data/database"
-    TEMP_BACKUP_DIR_PATH: str = r"./data/temp"
-    BACKUP_NAME_PREFIX: str = "backup"
-    BACKUP_G_DRIVE_FOLDER_ID: str = "19W3Pw2O_9UyfzFEm3JSR4ShxMyeB1U-5"
+    TEMP_BACKUP_DIR_PATH: Path = Path("./data/temp")
 
     def __init__(self, zipper: ZipperInterface, file_uploader: FileUploaderInterface) -> None:
         self._zipper = zipper
         self._file_uploader = file_uploader
+        self._settings = get_settings()
 
-    def make(self) -> None:
-        backup_name = self._get_backup_file_name()
-        backup_file_path = f"{self.TEMP_BACKUP_DIR_PATH}/{backup_name}"
-        self._zipper.zip(directory_path=self.DATA_DIR_PATH, output_file_path=backup_file_path)
+    def make(self, backup_base_name: str = "backup") -> None:
+        backup_name = self._get_backup_file_name(backup_base_name)
+        backup_file_path = Path(f"{self.TEMP_BACKUP_DIR_PATH}/{backup_name}")
+        self._zipper.zip(directory_path=self._settings.database_base_path, output_file_path=backup_file_path)
         self._file_uploader.upload(
-            file_path=backup_file_path, parent_folder_id=self.BACKUP_G_DRIVE_FOLDER_ID, uploaded_file_name=backup_name
+            file_path=backup_file_path,
+            parent_folder_id=self._settings.google_drive_backup_folder_id,
+            uploaded_file_name=backup_name,
         )
-        self._delete_file(backup_file_path)
+        backup_file_path.unlink()
 
-    def _get_backup_file_name(self) -> str:
+    def _get_backup_file_name(self, backup_base_name: str) -> str:
         backup_name_postfix = dt.datetime.now().strftime("%d_%m_%Y__%H_%M_%S")
-        return f"{self.BACKUP_NAME_PREFIX}_{backup_name_postfix}.zip"
-
-    def _delete_file(self, file_path: str) -> None:
-        os.remove(file_path)
+        return f"{backup_base_name}_{backup_name_postfix}.zip"
