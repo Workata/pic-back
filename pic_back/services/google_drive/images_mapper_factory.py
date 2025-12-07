@@ -5,8 +5,8 @@ from pic_back.services.web_image_coordinates_getter import WebImageCoordinatesGe
 
 
 class GoogleDriveImagesMapperFactory:
-    @classmethod
-    def create(cls) -> GoogleDriveImagesMapper:
+    @staticmethod
+    def create() -> GoogleDriveImagesMapper:
         return GoogleDriveImagesMapper(
             data_fetcher=GoogleDriveDataFetcher(),
             data_parser=GoogleDriveImageIdsDataParser(),

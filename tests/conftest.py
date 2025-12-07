@@ -10,7 +10,7 @@ from pic_back.main import app
 from pic_back.models import User
 from pic_back.routers.auth.utils import create_access_token
 from pic_back.settings import Settings, get_settings
-from pic_back.utils.create_user import create_user
+from pic_back.utils.auth import create_user
 
 
 @pytest.fixture(scope="session", autouse=True)

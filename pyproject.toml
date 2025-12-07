@@ -150,7 +150,8 @@ omit =  [
     "*__init__*",
     "*test*",
     "*/usr/*",
-    "main.py"
+    "main.py",
+    "pic_back/scripts/*"
 ]
 
 [tool.coverage.report]

@@ -17,7 +17,7 @@ SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly", "https://ww
 ROOT_FOLDER = "1Q3AAZ7wW-I7vG0ONIW_o0vWnHEJv8Ckm"
 
 
-def generate_google_api_credentials() -> None:  # pragma: no cover
+def generate_google_api_credentials() -> None:
     """
     User or generate credentials and make a request
 
