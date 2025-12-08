@@ -12,7 +12,7 @@ class GoogleDriveFolderContentDataParser:
         folders: List[GoogleDriveFolder] = []
         for entity in data["files"]:
             id: str = entity["id"]
-            name = Path(entity["name"]).stem  # remove file extension
+            name = Path(entity["name"]).stem
             if "folder" in entity.pop("mimeType"):
                 folders.append(GoogleDriveFolder(id=id, name=name))
                 continue
