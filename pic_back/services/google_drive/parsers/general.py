@@ -1,33 +1,37 @@
-import typing as t
 from pathlib import Path
+from typing import Any, Dict, List
 
-from tinydb import Query
-
-from pic_back.db import CollectionProvider
+from pic_back.db.utils.images_db_operations import ImageNotFoundDbException, ImagesDbOperations
+from pic_back.models import GoogleDriveFolder, GoogleDriveFolderContentParsedData, ImageToShow
 from pic_back.services.image_url_generator import GoogleDriveImageUrlGenerator
 
 
-class GoogleDriveGeneralDataParser:
-    def __init__(self) -> None:
-        self._images_collection = CollectionProvider().provide("images")
-
-    def parse(self, data: t.Dict[t.Any, t.Any]) -> t.Dict[str, t.Any]:
-        content_objects = data["files"]
-        images = []
-        folders = []
-        for obj in content_objects:
-            if "folder" in obj.pop("mimeType"):
-                folders.append(obj)
+class GoogleDriveFolderContentDataParser:
+    def parse(self, data: Dict[Any, Any]) -> GoogleDriveFolderContentParsedData:
+        images: List[ImageToShow] = []
+        folders: List[GoogleDriveFolder] = []
+        for entity in data["files"]:
+            id: str = entity["id"]
+            name = Path(entity["name"]).stem
+            if "folder" in entity.pop("mimeType"):
+                folders.append(GoogleDriveFolder(id=id, name=name))
                 continue
-            img_id: str = obj["id"]
-            obj["thumbnail_url"] = GoogleDriveImageUrlGenerator.generate_thumbnail_img_url_v2(img_id)
-            obj["image_url"] = GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(img_id)
-            obj["name"] = Path(obj["name"]).stem  # remove file extension
-            obj["comment"] = self._get_comment(img_id)
-            images.append(obj)
-        next_page_token = data.get("nextPageToken", None)
-        return {"images": images, "folders": folders, "nextPageToken": next_page_token}
+            images.append(
+                ImageToShow(
+                    id=id,
+                    name=name,
+                    comment=self._get_comment(id),
+                    thumbnail_url=GoogleDriveImageUrlGenerator.generate_thumbnail_img_url_v2(id),
+                    image_url=GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(id),
+                )
+            )
+        return GoogleDriveFolderContentParsedData(
+            images=images, folders=folders, next_page_token=data.get("nextPageToken", None)
+        )
 
     def _get_comment(self, img_id: str) -> str:
-        img = self._images_collection.get(Query().id == img_id)
-        return str(img["comment"]) if img is not None else ""
+        try:
+            img = ImagesDbOperations.get(img_id)
+        except ImageNotFoundDbException:
+            return ""
+        return img.comment

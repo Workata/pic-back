@@ -9,7 +9,7 @@ from fastapi_utils.tasks import repeat_every
 
 from pic_back.routers import auth_router, category_router, gdrive_router, image_router, map_router
 from pic_back.services.backup import BackupMakerFactory
-from pic_back.settings import get_settings
+from pic_back.settings import LOGGING_CONFIG, EnvType, get_settings
 
 
 @asynccontextmanager
@@ -21,10 +21,16 @@ async def lifespan(app: FastAPI) -> t.Any:
     yield
 
 
-settings = get_settings()
-logging.config.dictConfig(settings.logging)
+logging.config.dictConfig(LOGGING_CONFIG)
 
+settings = get_settings()
+logger = logging.getLogger(name="main")
 app = FastAPI(lifespan=lifespan)
+
+
+@app.get("/")
+def healthcheck() -> t.Dict[str, str]:
+    return {"Status": "OK!"}
 
 
 app.include_router(category_router)
@@ -44,12 +50,9 @@ app.add_middleware(
 )
 
 
-backup_maker = BackupMakerFactory.create()
-
-
 @repeat_every(seconds=60 * 60 * 24)
 async def backup_task() -> None:
-    if settings.environment == "dev":
-        print("Backup omitted - dev env")
-        return
-    backup_maker.make()
+    if settings.environment != EnvType.PROD:
+        logger.info(f"Backup omitted - not prod. Current env: {settings.environment}")
+        return None
+    BackupMakerFactory.create().make()

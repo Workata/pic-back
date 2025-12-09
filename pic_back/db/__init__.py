@@ -1,1 +1,1 @@
-from .collection_provider import CollectionProvider
+from .collection_provider import CollectionName, CollectionProvider

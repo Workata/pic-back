@@ -12,11 +12,11 @@ class GoogleDriveImageUrlGenerator:
     V2 standard - not supported anymore - use thumbnail url and manipulate size (w) to get better resolution
     """
 
-    STANDARD_IMAGE_BASE_URL_V1 = "https://drive.google.com/uc"
-    THUMBNAIL_IMG_BASE_URL_V1 = "https://drive.google.com/thumbnail"
+    STANDARD_IMAGE_BASE_URL_V1: str = "https://drive.google.com/uc"
+    THUMBNAIL_IMG_BASE_URL_V1: str = "https://drive.google.com/thumbnail"
 
-    STANDARD_IMAGE_BASE_URL_V2 = "https://lh3.google.com/u/0/d"
-    THUMBNAIL_IMG_BASE_URL_V2 = "https://lh3.googleusercontent.com/d"
+    STANDARD_IMAGE_BASE_URL_V2: str = "https://lh3.google.com/u/0/d"
+    THUMBNAIL_IMG_BASE_URL_V2: str = "https://lh3.googleusercontent.com/d"
 
     @classmethod
     def generate_standard_img_url_v1(cls, image_id: str) -> str:

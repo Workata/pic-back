@@ -4,35 +4,34 @@ from typing import Optional
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from tinydb import where
 
-from pic_back.db import CollectionProvider
+from pic_back.db.utils import UserNotFoundException, UsersDbOperations
 from pic_back.models import AuthenticatedUser
-from pic_back.routers.auth.exceptions import WrongCredentials
+from pic_back.routers.auth.exceptions import AuthenticationFailedHTTPException
 from pic_back.settings import get_settings
 
-collection_provider = CollectionProvider()
 settings = get_settings()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> AuthenticatedUser:
-    users_coll = collection_provider.provide("users")
     try:
         payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
-        username = payload.get("username")
-        if username is None:
-            raise WrongCredentials()
-    except JWTError as jwt_error:
-        raise WrongCredentials() from jwt_error
-    user = users_coll.get(where("username") == username)
-    if not user:
-        raise WrongCredentials()
-    return AuthenticatedUser(username=user["username"])
+    except JWTError:
+        raise AuthenticationFailedHTTPException("JWT signature is invalid")
+
+    username = payload.get("username")
+    if username is None:
+        raise AuthenticationFailedHTTPException("Bad payload schema")
+
+    try:
+        user = UsersDbOperations.get(username)
+    except UserNotFoundException:
+        raise AuthenticationFailedHTTPException("Authentication failed! Check credentials")
+    return AuthenticatedUser(username=user.username)
 
 
 def create_access_token(data: dict, expires_delta: Optional[dt.timedelta] = None) -> str:
-    """shouldnt be async"""
     to_encode = data.copy()
     expire = (
         dt.datetime.now(dt.timezone.utc) + expires_delta

@@ -14,7 +14,7 @@ jobs:
       run: docker build -f ./.github/workflows/Dockerfile . --tag pic-back-test-image
 
     - name: Run static checks via pre-commit
-      run: docker run pic-back-test-image:latest uv run pre-commit run --all
+      run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run pre-commit run --all
 
     - name: Run unit tests
-      run: docker run pic-back-test-image:latest uv run pytest --cov=pic_back
+      run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run pytest --cov=pic_back
