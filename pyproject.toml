@@ -44,6 +44,7 @@ warn_return_any = true
 warn_unused_ignores = true
 no_implicit_optional = true
 show_error_codes = true
+disable_error_code = ["prop-decorator"]
 
 exclude = ["tests", ".venv", "venv", "data", "private", "dump"]
 

@@ -17,7 +17,7 @@ services:
     container_name: caddy
     restart: unless-stopped
     build:
-      context: ./src/caddy
+      context: ./caddy
       dockerfile: ./Dockerfile
     ports:
       - 80:80
@@ -28,8 +28,8 @@ services:
     depends_on:
       - fastapi
     environment:
-      PROXY_BACKEND: fastapi
-      PROXY_PORT: 8000
+      PROXY_BACKEND: ${PROXY_BACKEND}
+      PROXY_PORT: ${PROXY_PORT}
       DOMAIN: ${DOMAIN}
 
 volumes:

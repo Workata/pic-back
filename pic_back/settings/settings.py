@@ -1,8 +1,9 @@
+import tomllib
 from enum import Enum
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -34,7 +35,13 @@ class Settings(BaseSettings):
     # pagination
     default_page_size: int = 25
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    @computed_field
+    @property
+    def version(self) -> str:
+        with open("./pyproject.toml", "rb") as f:
+            return tomllib.load(f)["project"]["version"]  # type: ignore
 
 
 @lru_cache

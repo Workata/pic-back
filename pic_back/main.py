@@ -33,6 +33,11 @@ def healthcheck() -> t.Dict[str, str]:
     return {"Status": "OK!"}
 
 
+@app.get(f"{settings.global_api_prefix}/system/info")
+def system_info() -> t.Dict[str, str]:
+    return {"version": settings.version}
+
+
 app.include_router(category_router)
 app.include_router(map_router)
 app.include_router(gdrive_router)

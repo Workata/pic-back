@@ -1,4 +1,4 @@
-FROM caddy/caddy:2.7.6-alpine
+FROM caddy/caddy:2.10.2-alpine
 
 RUN mkdir /app
 COPY start.sh /app/start.sh
