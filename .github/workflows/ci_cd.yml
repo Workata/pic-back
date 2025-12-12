@@ -9,11 +9,6 @@ on:
       - 'caddy/**'
       - '**/Dockerfile'
       - '.python-version'
-    paths-ignore:
-      - '**.md'
-      - 'LICENSE'
-      - 'Makefile'
-      - '.gitignore'
 
 jobs:
   # every branch
