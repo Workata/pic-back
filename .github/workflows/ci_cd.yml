@@ -30,7 +30,7 @@ jobs:
         run: |
           install -m 600 -D /dev/null ~/.ssh/github_do
           echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/github_do
-          ssh-keyscan -t rsa @${{ secrets.VM_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ secrets.VM_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy application on the VM
         run: eval `ssh-agent -s` && ssh-add ~/.ssh/github_do && ssh root@${{ secrets.VM_IP }} 'bash -s' < ./.github/workflows/deploy.sh
