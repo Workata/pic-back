@@ -28,8 +28,8 @@ jobs:
 
       - name: Create SSH key
         run: |
-          install -m 600 -D /dev/null ~/.ssh/id_rsa
-          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/id_rsa
+          install -m 600 -D /dev/null ~/.ssh/github_do
+          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/github_do
 
       - name: Deploy application on the VM
-        run: eval `ssh-agent -s` && ssh root@${{ secrets.VM_IP }} 'bash -s' < ./.github/workflows/deploy.sh
+        run: eval `ssh-agent -s` && ssh-add ~/.ssh/github_do && ssh root@${{ secrets.VM_IP }} 'bash -s' < ./.github/workflows/deploy.sh
