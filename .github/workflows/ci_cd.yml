@@ -1,8 +1,22 @@
 name: ci-cd
 
-on: [push]
+on:
+  push:
+    paths:
+      - '**.py'
+      - '.github/workflows/**'
+      - 'pic_back/**'
+      - 'caddy/**'
+      - '**/Dockerfile'
+      - '.python-version'
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - 'Makefile'
+      - '.gitignore'
 
 jobs:
+  # every branch
   checks:
     runs-on: ubuntu-latest
     steps:
@@ -18,7 +32,7 @@ jobs:
       - name: Run unit tests
         run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run pytest --cov=pic_back
 
-
+  # only main branch
   deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
