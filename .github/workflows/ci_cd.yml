@@ -1,0 +1,28 @@
+name: ci-cd
+
+on: [push]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Build docker test image
+        run: docker build -f ./.github/workflows/Dockerfile . --tag pic-back-test-image
+
+      - name: Run static checks via pre-commit
+        run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run pre-commit run --all
+
+      - name: Run unit tests
+        run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run pytest --cov=pic_back
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: checks
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy application on the VM
+        run: ssh-add ${{ secrets.VM_SSH_KEY }} && ssh root@${{ secrets.VM_IP }} 'bash -s' < ./.github/workflows/deploy.sh

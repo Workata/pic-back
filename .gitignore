@@ -2,6 +2,9 @@ private/*
 config.yaml
 dump
 
+last_update_start.txt
+last_update_end.txt
+
 # container volume files
 data/*
 !data/.gitkeep
