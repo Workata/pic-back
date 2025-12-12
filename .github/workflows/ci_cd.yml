@@ -25,4 +25,4 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Deploy application on the VM
-        run: ssh-add ${{ secrets.VM_SSH_KEY }} && ssh root@${{ secrets.VM_IP }} 'bash -s' < ./.github/workflows/deploy.sh
+        run: eval `ssh-agent -s` && ssh-add ${{ secrets.VM_SSH_KEY }} && ssh root@${{ secrets.VM_IP }} 'bash -s' < ./.github/workflows/deploy.sh
