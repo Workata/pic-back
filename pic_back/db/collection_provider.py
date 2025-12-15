@@ -15,12 +15,14 @@ class CollectionName(str, Enum):
 
 
 class CollectionProvider:
+    # fmt: off
     COLLECTION_NAME_TO_COLLECTION_PATH_CREATOR: Dict[CollectionName, Callable[[], Path]] = {
-        CollectionName.CATEGORIES: lambda: Path(get_settings().database_base_path, "categories.json"),
-        CollectionName.IMAGES: lambda: Path(get_settings().database_base_path, "images.json"),
-        CollectionName.USERS: lambda: Path(get_settings().database_base_path, "users.json"),
-        CollectionName.MARKERS: lambda: Path(get_settings().database_base_path, "categories.json"),
+        CollectionName.CATEGORIES: lambda: Path(get_settings().database_base_path, f"{CollectionName.CATEGORIES.value}.json"),
+        CollectionName.IMAGES: lambda: Path(get_settings().database_base_path, f"{CollectionName.IMAGES.value}.json"),
+        CollectionName.USERS: lambda: Path(get_settings().database_base_path, f"{CollectionName.USERS.value}.json"),
+        CollectionName.MARKERS: lambda: Path(get_settings().database_base_path, f"{CollectionName.MARKERS.value}.json"),
     }
+    # fmt: on
 
     @classmethod
     def provide(cls, collection_name: CollectionName) -> TinyDB:

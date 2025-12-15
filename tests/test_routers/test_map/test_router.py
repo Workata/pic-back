@@ -15,12 +15,29 @@ def test_list_markers_endpoint_should_return_200(client):
         Marker(url="www.dummy2.com", coords=Coords(latitude="3.5", longitude="1.7")),
     ]
     [MarkersDbOperations.create(marker) for marker in markers]
+    expected_response = [
+        {
+            "url": markers[0].url,
+            "coords": {
+                "longitude": markers[0].coords.longitude,
+                "latitude": markers[0].coords.latitude,
+            },
+        },
+        {
+            "url": markers[1].url,
+            "coords": {
+                "longitude": markers[1].coords.longitude,
+                "latitude": markers[1].coords.latitude,
+            },
+        },
+    ]
 
     res = client.get(f"{images_router_base_path}/marker")
 
     res_data = res.json()
     assert res.status_code == status.HTTP_200_OK
     assert len(res_data) == len(markers)
+    assert res_data == expected_response
 
 
 def test_create_marker_endpoint_should_return_201(client, auth_headers):
