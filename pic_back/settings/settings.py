@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     global_api_prefix: str = "/api/v1"
 
     google_drive_backup_folder_id: str
+    google_drive_upload_images_folder_id: str = "13RdM7JHyoDdwr2wdWINeDJQEveTUWtC0"
+    google_drive_token_json_file_path: Path = Path("./data/token.json")
 
     google_client_id: str
     google_api_key: str

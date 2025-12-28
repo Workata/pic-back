@@ -1,4 +1,6 @@
 from .data_fetcher import GoogleDriveDataFetcher
+from .folder_path_getter import GoogleDriveFolderPathGetter
+from .google_drive_service_factory import GoogleDriveServiceFactory
 from .images_mapper import GoogleDriveImagesMapper
 from .images_mapper_factory import GoogleDriveImagesMapperFactory
 from .parsers.general import GoogleDriveFolderContentDataParser

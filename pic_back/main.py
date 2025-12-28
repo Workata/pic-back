@@ -58,6 +58,6 @@ app.add_middleware(
 @repeat_every(seconds=60 * 60 * 24)
 async def backup_task() -> None:
     if settings.environment != EnvType.PROD:
-        logger.info(f"Backup omitted - not prod. Current env: {settings.environment}")
+        logger.info(f"Backup omitted - not prod. Current env: `{settings.environment.value}`")
         return None
     BackupMakerFactory.create().make()

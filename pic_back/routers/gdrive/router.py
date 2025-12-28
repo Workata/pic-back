@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, status
 
 from pic_back.models import GoogleDriveFolderContentParsedData
 from pic_back.services import GoogleDriveDataFetcher, GoogleDriveFolderContentDataParser
+from pic_back.services.google_drive.folder_path_getter import ChainedGoogleDriveFolder, GoogleDriveFolderPathGetter
 from pic_back.settings import get_settings
 
 settings = get_settings()
@@ -25,3 +26,9 @@ async def get_folder_content(folder_id: str, page_token: Optional[str] = None) -
         query=f"'{folder_id}' in parents", fields=["id", "name", "mimeType"], page_token=page_token
     )
     return parser.parse(google_drive_data)
+
+
+@router.get("/folder/path/{folder_id}", response_model=List[ChainedGoogleDriveFolder], status_code=status.HTTP_200_OK)
+async def get_folder_path(folder_id: str) -> List[ChainedGoogleDriveFolder]:
+    folder_path_getter = GoogleDriveFolderPathGetter()
+    return folder_path_getter.get(folder_id)
