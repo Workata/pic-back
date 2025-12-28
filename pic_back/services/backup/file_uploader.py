@@ -1,17 +1,16 @@
-import typing as t
 from pathlib import Path
+from typing import List
 
-from google.oauth2.credentials import Credentials
-from googleapiclient import discovery
 from googleapiclient.http import MediaFileUpload
+
+from pic_back.services.google_drive.google_drive_service_factory import GoogleDriveServiceFactory
 
 
 class FileUploader:
-    SCOPES: t.List[str] = ["https://www.googleapis.com/auth/drive.file"]
+    SCOPES: List[str] = ["https://www.googleapis.com/auth/drive.file"]
 
-    def __init__(self, token_json_file_path: Path = Path("./data/token.json")) -> None:
-        credentials = Credentials.from_authorized_user_file(filename=str(token_json_file_path), scopes=self.SCOPES)
-        self._google_drive_service = discovery.build(serviceName="drive", version="v3", credentials=credentials)
+    def __init__(self) -> None:
+        self._google_drive_service = GoogleDriveServiceFactory.create(scopes=self.SCOPES)
 
     def upload(self, file_path: Path, parent_folder_id: str, uploaded_file_name: str) -> None:
         file_metadata = {"name": uploaded_file_name, "parents": [parent_folder_id]}

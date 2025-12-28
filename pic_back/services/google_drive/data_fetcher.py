@@ -1,29 +1,25 @@
-import typing as t
-from pathlib import Path
+from typing import Any, List, Optional
 
-from google.oauth2.credentials import Credentials
-from googleapiclient import discovery
-
+from pic_back.services.google_drive.google_drive_service_factory import GoogleDriveServiceFactory
 from pic_back.settings import get_settings
 
 settings = get_settings()
 
 
 class GoogleDriveDataFetcher:
-    SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
+    SCOPES: List[str] = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
     SPACES: str = "drive"
 
-    def __init__(self, token_json_file_path: Path = Path("./data/token.json")) -> None:
-        credentials = Credentials.from_authorized_user_file(filename=token_json_file_path, scopes=self.SCOPES)
-        self._google_drive_service = discovery.build(serviceName="drive", version="v3", credentials=credentials)
+    def __init__(self) -> None:
+        self._google_drive_service = GoogleDriveServiceFactory.create(scopes=self.SCOPES)
 
     def query_content(
         self,
         query: str,
-        fields: t.List[str],
-        page_token: t.Optional[str] = None,
+        fields: List[str],
+        page_token: Optional[str] = None,
         page_size: int = settings.default_page_size,
-    ) -> t.Any:
+    ) -> Any:
         fields_str = ", ".join(fields)
         if page_token:
             return (
