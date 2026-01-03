@@ -26,10 +26,12 @@ class GoogleDriveFolderPathGetter:
         """
         search_up_to_folder_id - not included in a result
         """
-        folders = []
+        folders: List[ChainedGoogleDriveFolder] = []
         level = 0
-        target_folder = self._gdrive_service.files().get(fileId=folder_id, fields="id, name, parents").execute()
+        if search_up_to_folder_id is not None and search_up_to_folder_id == folder_id:
+            return folders
 
+        target_folder = self._gdrive_service.files().get(fileId=folder_id, fields="id, name, parents").execute()
         folders.append(
             ChainedGoogleDriveFolder(id=target_folder.get("id"), name=target_folder.get("name"), level=level)
         )

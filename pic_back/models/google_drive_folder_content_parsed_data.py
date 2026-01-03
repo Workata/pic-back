@@ -1,12 +1,11 @@
 from typing import List, Optional
 
-from pydantic import BaseModel
-
+from .base_output_serializer import BaseOutputSerializer
 from .google_drive_folder import GoogleDriveFolder
 from .image import ImageToShow
 
 
-class GoogleDriveFolderContentParsedData(BaseModel):
+class GoogleDriveFolderContentParsedData(BaseOutputSerializer):
     """
     DB Model: NO
     """
