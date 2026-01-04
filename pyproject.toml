@@ -10,7 +10,6 @@ dependencies = [
     "fastapi-utils==0.8.0",
     "fastapi[standard]==0.121.0",
     "google-api-python-client==2.187.0",
-    "google-auth-httplib2==0.2.1",
     "google-auth-oauthlib==1.2.3",
     "httpx>=0.28.1",
     "pydantic==2.12.4",
