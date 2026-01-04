@@ -18,12 +18,15 @@ async def get_folder_content(folder_id: str, page_token: Optional[str] = None) -
     if page size is more than 25 there seems to be a problem
     with loading pics in viewer on frontend site
     e.g.: click on 29th pic
+
+    TODO pagination problem
+    ! query here should be (~) the same as in 'GoogleDriveImagesMapper' service - pagination problem
     """
     fetcher = GoogleDriveDataFetcher()
     parser = GoogleDriveFolderContentDataParser()
 
     google_drive_data = fetcher.query_content(
-        query=f"'{folder_id}' in parents", fields=["id", "name", "mimeType"], page_token=page_token
+        query=f"'{folder_id}' in parents and trashed=false", fields=["id", "name", "mimeType"], page_token=page_token
     )
     return parser.parse(google_drive_data)
 
