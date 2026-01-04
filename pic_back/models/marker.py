@@ -20,5 +20,7 @@ class Coords(BaseModel):
 
 
 class Marker(BaseModel):
+    """DB model"""
+
     coords: Coords
     url: str
