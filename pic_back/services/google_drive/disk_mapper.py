@@ -1,4 +1,5 @@
 import datetime as dt
+import logging
 from typing import Any, List, Optional, Protocol
 
 from tinydb import Query
@@ -22,6 +23,9 @@ class ImagesMapperInterface(Protocol):  # pragma: no cover
         pass
 
 
+logger = logging.getLogger("disk_mapper")
+
+
 class GoogleDriveDiskMapper:
     TIMESTAMP_NAME: str = "disk_mapper_last_run"
 
@@ -37,9 +41,13 @@ class GoogleDriveDiskMapper:
             page_size=100,  # TODO check
         )
         for folder in data["files"]:
+            folder_id = folder["id"]
             last_modified_dt = dt.datetime.fromisoformat(folder["modifiedTime"])
             if last_run_dt is None or last_modified_dt > last_run_dt:
-                self._images_mapper.map_folder(folder["id"])
+                logger.info(f"Mapping folder `{folder_id}`")
+                self._images_mapper.map_folder(folder_id)
+            else:
+                logger.info(f"Folder `{folder_id}` skipped - already mapped")
         self._update_last_run_datetime()
 
     def _get_last_run_datetime(self) -> Optional[dt.datetime]:
@@ -49,7 +57,7 @@ class GoogleDriveDiskMapper:
             return None
 
     def _update_last_run_datetime(self) -> None:
-        new_last_run_dt = dt.datetime.now()
+        new_last_run_dt = dt.datetime.now(dt.timezone.utc)
         query = Query()
         timestamp = Timestamp(name=self.TIMESTAMP_NAME, time=new_last_run_dt)
         timestamp_db = TimestampDbOperations.get_db()
