@@ -9,6 +9,7 @@ from pic_back.routers.auth.utils import get_current_user
 from pic_back.routers.map.exceptions import MarkerExistsHTTPException
 from pic_back.routers.shared.serializers.output import ResponseMessage
 from pic_back.services import GoogleDriveImagesMapperFactory
+from pic_back.services.google_drive import GoogleDriveDiskMapperFactory
 from pic_back.settings import get_settings
 
 settings = get_settings()
@@ -41,7 +42,20 @@ def map_folder_task(folder_id: str) -> None:
 
 @router.post("/folder/{folder_id}", response_model=ResponseMessage, status_code=status.HTTP_201_CREATED)
 async def map_folder(
-    folder_id: str, background_tasks: BackgroundTasks, user: AuthenticatedUser = Depends(get_current_user)
+    folder_id: str, background_tasks: BackgroundTasks, _: AuthenticatedUser = Depends(get_current_user)
 ) -> ResponseMessage:
     background_tasks.add_task(map_folder_task, folder_id)
     return ResponseMessage(detail=f"Folder {folder_id} will be mapped in the background!")
+
+
+def map_disk_task() -> None:
+    mapper = GoogleDriveDiskMapperFactory.create()
+    mapper.run()
+
+
+@router.post("/disk", response_model=ResponseMessage, status_code=status.HTTP_201_CREATED)
+async def map_disk(
+    background_tasks: BackgroundTasks, _: AuthenticatedUser = Depends(get_current_user)
+) -> ResponseMessage:
+    background_tasks.add_task(map_disk_task)
+    return ResponseMessage(detail="Disk will be mapped in the background!")

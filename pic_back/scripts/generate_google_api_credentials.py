@@ -47,9 +47,6 @@ def generate_google_api_credentials() -> None:
         service = build("drive", "v3", credentials=creds)
 
         # Call the Drive v3 API
-        # results = service.files().list(
-        #     pageSize=10, fields="nextPageToken, files(id, name)"
-        # ).execute()
         results = (
             service.files()
             .list(q=f"'{ROOT_FOLDER}' in parents", spaces="drive", fields="nextPageToken, files(id, name)", pageSize=10)

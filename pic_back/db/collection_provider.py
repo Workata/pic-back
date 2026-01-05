@@ -12,6 +12,7 @@ class CollectionName(str, Enum):
     IMAGES = "images"
     USERS = "users"
     MARKERS = "markers"
+    TIMESTAMPS = "timestamps"
 
 
 class CollectionProvider:
@@ -21,6 +22,7 @@ class CollectionProvider:
         CollectionName.IMAGES: lambda: Path(get_settings().database_base_path, f"{CollectionName.IMAGES.value}.json"),
         CollectionName.USERS: lambda: Path(get_settings().database_base_path, f"{CollectionName.USERS.value}.json"),
         CollectionName.MARKERS: lambda: Path(get_settings().database_base_path, f"{CollectionName.MARKERS.value}.json"),
+        CollectionName.TIMESTAMPS: lambda: Path(get_settings().database_base_path, f"{CollectionName.TIMESTAMPS.value}.json"),
     }
     # fmt: on
 

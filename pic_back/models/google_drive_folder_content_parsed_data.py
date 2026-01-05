@@ -6,10 +6,6 @@ from .image import ImageToShow
 
 
 class GoogleDriveFolderContentParsedData(BaseOutputSerializer):
-    """
-    DB Model: NO
-    """
-
     images: List[ImageToShow]
     folders: List[GoogleDriveFolder]
     next_page_token: Optional[str] = None

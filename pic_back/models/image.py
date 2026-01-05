@@ -7,7 +7,7 @@ from pic_back.models.category import Category
 
 class Image(BaseModel):
     """
-    DB model: YES
+    DB model
     """
 
     id: str
@@ -18,7 +18,6 @@ class Image(BaseModel):
 
 class ImageToShow(BaseModel):
     """
-    DB model: NO
     image from the Google drive API with added comment (from db)
     """
 

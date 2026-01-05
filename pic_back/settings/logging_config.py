@@ -3,8 +3,9 @@ LOGGING_CONFIG = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "[{levelname}][{asctime}] {message}",
+            "format": "[{levelname}][{name}][{asctime}] {message}",
             "style": "{",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
         },
         "simple": {
             "format": "[{levelname}] {message}",
@@ -17,8 +18,9 @@ LOGGING_CONFIG = {
     },
     "loggers": {
         "root": {
-            "handlers": ["console"],
+            "handlers": ["console", "file"],
             "level": "INFO",
-        }
+        },
+        "googleapiclient.discovery_cache": {"level": "WARNING"},
     },
 }
