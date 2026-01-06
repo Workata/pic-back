@@ -2,6 +2,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
+from pic_back.models.base_output_serializer import BaseOutputSerializer
 from pic_back.models.category import Category
 
 
@@ -16,7 +17,7 @@ class Image(BaseModel):
     comment: str = Field(default="")
 
 
-class ImageToShow(BaseModel):
+class ImageToShow(BaseOutputSerializer):
     """
     image from the Google drive API with added comment (from db)
     """
