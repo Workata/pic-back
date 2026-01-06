@@ -2,8 +2,8 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from pic_back.models.base_output_serializer import BaseOutputSerializer
 from pic_back.models.category import Category
+from pic_back.routers.shared.serializers import BaseOutputSerializer
 
 
 class Image(BaseModel):

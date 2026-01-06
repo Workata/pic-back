@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from .base_output_serializer import BaseOutputSerializer
+from ..routers.shared.serializers import BaseOutputSerializer
 from .google_drive_folder import GoogleDriveFolder
 from .image import ImageToShow
 
