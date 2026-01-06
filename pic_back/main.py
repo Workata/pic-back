@@ -60,8 +60,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+DAY_SECONDS: int = 60 * 60 * 24
 
-@repeat_every(seconds=60 * 60 * 24)
+
+@repeat_every(seconds=2 * DAY_SECONDS)
 async def backup_task() -> None:
     if settings.environment != EnvType.PROD:
         logger.info(f"Backup omitted - not prod. Current env: `{settings.environment.value}`")
@@ -69,7 +71,7 @@ async def backup_task() -> None:
     BackupMakerFactory.create().make()
 
 
-@repeat_every(seconds=60 * 60 * 24)
+@repeat_every(seconds=DAY_SECONDS)
 async def map_disk_task() -> None:
     if settings.environment != EnvType.PROD:
         logger.info(f"Mapping disk omitted - not prod. Current env: `{settings.environment.value}`")
