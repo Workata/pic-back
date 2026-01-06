@@ -1,9 +1,9 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from .base_output_serializer import BaseOutputSerializer
 
 
-class VerbosePaginatedResponseOutputSerializer(BaseModel):
+class VerbosePaginatedResponseOutputSerializer(BaseOutputSerializer):
     """
     First page number should be 0
     """

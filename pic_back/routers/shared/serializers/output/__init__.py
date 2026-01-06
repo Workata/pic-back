@@ -1,2 +1,3 @@
+from .base_output_serializer import BaseOutputSerializer
 from .paginated_response import VerbosePaginatedResponseOutputSerializer
 from .response_message import ResponseMessage

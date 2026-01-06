@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from .base_output_serializer import BaseOutputSerializer
 
 
-class ResponseMessage(BaseModel):
+class ResponseMessage(BaseOutputSerializer):
     detail: str
