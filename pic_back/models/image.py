@@ -20,6 +20,7 @@ class Image(BaseModel):
 class ImageToShow(BaseOutputSerializer):
     """
     image from the Google drive API with added comment (from db)
+    move to serializers
     """
 
     id: str
