@@ -3,8 +3,8 @@ from typing import Any, List, Optional, Protocol
 
 from tinydb import Query
 
-from pic_back.db.utils import MarkersDbOperations
-from pic_back.models import Coords, Marker
+from pic_back.db.utils.markers_db_operations import MarkersDbOperations
+from pic_back.models.marker import Coords, Marker
 from pic_back.services.image_url_generator import TomtolImageUrlGenerator
 from pic_back.settings import get_settings
 

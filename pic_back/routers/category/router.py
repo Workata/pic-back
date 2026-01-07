@@ -11,9 +11,9 @@ from pic_back.models import AuthenticatedUser, Category
 from pic_back.routers.auth.utils import get_current_user
 from pic_back.routers.category.exceptions import CategoryExistsHTTPException, CategoryNotFoundHTTPException
 from pic_back.routers.category.serializers.input import UpdateCategoryInputSerializer
-from pic_back.routers.category.serializers.output import ImagesFromCategoryOutputSerializer, ImageToShow
+from pic_back.routers.category.serializers.output import ImagesFromCategoryOutputSerializer
+from pic_back.routers.gdrive.serializers.output.image_to_show import ImageToShowOutputSerializer
 from pic_back.routers.shared.serializers.output import ResponseMessage
-from pic_back.services import GoogleDriveImageUrlGenerator
 from pic_back.settings import get_settings
 
 query = Query()
@@ -82,16 +82,7 @@ async def get_images_from_category(
         offset : offset
         + page_size  # noqa: E203
     ]
-    images = [
-        ImageToShow(
-            id=img["id"],
-            name=img["name"],
-            comment=img["comment"],
-            thumbnail_url=GoogleDriveImageUrlGenerator.generate_thumbnail_img_url_v2(img["id"]),
-            image_url=GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(img["id"]),
-        ).model_dump()
-        for img in images
-    ]
+    images = [ImageToShowOutputSerializer(id=img["id"], name=img["name"], comment=img["comment"]) for img in images]
 
     endpoint_url = f"{request.base_url}{router_path}/{category_name}"
     previous_page = page - 1 if page != 0 else None

@@ -1,1 +1,1 @@
-from .images_from_category import ImagesFromCategoryOutputSerializer, ImageToShow
+from .images_from_category import ImagesFromCategoryOutputSerializer

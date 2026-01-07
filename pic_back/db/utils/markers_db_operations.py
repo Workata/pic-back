@@ -4,7 +4,7 @@ from pydantic import TypeAdapter
 from tinydb import Query, TinyDB
 
 from pic_back.db import CollectionName, CollectionProvider
-from pic_back.models import Marker
+from pic_back.models.marker import Marker
 
 from .db_operations import DbOperations
 

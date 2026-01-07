@@ -1,6 +1,6 @@
 from .google_drive import (
     GoogleDriveDataFetcher,
-    GoogleDriveFolderContentDataParser,
+    GoogleDriveFolderContentParser,
     GoogleDriveImagesMapper,
     GoogleDriveImagesMapperFactory,
 )

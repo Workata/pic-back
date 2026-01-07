@@ -1,7 +1,7 @@
 from tinydb import Query, TinyDB
 
 from pic_back.db import CollectionName, CollectionProvider
-from pic_back.models import Image
+from pic_back.models.image import Image
 
 from .db_operations import DbOperations
 

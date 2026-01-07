@@ -1,4 +1,4 @@
-from pic_back.routers.shared.serializers import BaseOutputSerializer
+from pic_back.routers.shared.serializers.output import BaseOutputSerializer
 
 
 class TokenOutputSerializer(BaseOutputSerializer):
