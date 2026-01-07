@@ -40,8 +40,9 @@ class ImagesDbOperations(DbOperations):
     @classmethod
     def get_or_create(cls, image: Image) -> Image:
         db = cls.get_db()
-        if db.get(query.id == image.id) is not None:
-            return image
+        image_from_db = db.get(query.id == image.id)
+        if image_from_db is not None:
+            return Image(**image_from_db)
         db.insert(image.model_dump())
         return image
 
