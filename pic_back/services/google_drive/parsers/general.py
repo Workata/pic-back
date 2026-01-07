@@ -2,15 +2,11 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from pic_back.db.utils.images_db_operations import ImageNotFoundDbException, ImagesDbOperations
-
-# from pic_back.routers.gdrive.serializers.output import (
-#     GoogleDriveFolderContentOutputSerializer,
-#     GoogleDriveFolderOutputSerializer,
-#     ImageToShowOutputSerializer,
-# )
-from pic_back.routers.gdrive.serializers.output.folder import GoogleDriveFolderOutputSerializer
-from pic_back.routers.gdrive.serializers.output.folder_content import GoogleDriveFolderContentOutputSerializer
-from pic_back.routers.gdrive.serializers.output.image_to_show import ImageToShowOutputSerializer
+from pic_back.routers.gdrive.serializers.output import (
+    GoogleDriveFolderContentOutputSerializer,
+    GoogleDriveFolderOutputSerializer,
+    ImageToShowOutputSerializer,
+)
 
 
 class GoogleDriveFolderContentParser:

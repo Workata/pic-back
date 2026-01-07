@@ -1,3 +1,3 @@
 from .folder import GoogleDriveFolderOutputSerializer
 from .folder_content import GoogleDriveFolderContentOutputSerializer
-# from .image_to_show import ImageToShowOutputSerializer
+from .image_to_show import ImageToShowOutputSerializer

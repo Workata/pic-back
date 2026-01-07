@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from pic_back.models.category import Category
+from pic_back.models import Category
 
 
 class Image(BaseModel):

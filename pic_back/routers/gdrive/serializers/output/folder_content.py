@@ -1,11 +1,9 @@
 from typing import List, Optional
 
-from pic_back.routers.gdrive.serializers.output.folder import GoogleDriveFolderOutputSerializer
+from pic_back.routers.shared.serializers.output import BaseOutputSerializer
 
-# from .folder import GoogleDriveFolderOutputSerializer
-# from .image_to_show import ImageToShowOutputSerializer
-from pic_back.routers.gdrive.serializers.output.image_to_show import ImageToShowOutputSerializer
-from pic_back.routers.shared.serializers.output.base_output_serializer import BaseOutputSerializer
+from .folder import GoogleDriveFolderOutputSerializer
+from .image_to_show import ImageToShowOutputSerializer
 
 
 class GoogleDriveFolderContentOutputSerializer(BaseOutputSerializer):

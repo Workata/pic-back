@@ -1,7 +1,7 @@
 from tinydb import Query, TinyDB
 
 from pic_back.db import CollectionName, CollectionProvider
-from pic_back.models.timestamp import Timestamp
+from pic_back.models import Timestamp
 
 query = Query()
 

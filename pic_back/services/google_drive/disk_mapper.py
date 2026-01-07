@@ -5,8 +5,7 @@ from typing import Any, List, Optional, Protocol
 from tinydb import Query
 
 from pic_back.db.utils.timestamps_db_operations import TimestampDbOperations, TimestampNotFoundException
-from pic_back.models.marker import Coords
-from pic_back.models.timestamp import Timestamp
+from pic_back.models import Coords, Timestamp
 
 
 class GoogleDriveDataFetcherInterface(Protocol):  # pragma: no cover

@@ -7,7 +7,6 @@ from pic_back.services.image_url_generator.google_drive import GoogleDriveImageU
 class ImageToShowOutputSerializer(BaseOutputSerializer):
     """
     image from the Google drive API with added comment (from db)
-    move to serializers
     """
 
     id: str
@@ -15,9 +14,11 @@ class ImageToShowOutputSerializer(BaseOutputSerializer):
     comment: str
 
     @computed_field
+    @property
     def thumbnail_url(self) -> str:
         return GoogleDriveImageUrlGenerator.generate_thumbnail_img_url_v2(self.id)
 
     @computed_field
+    @property
     def image_url(self) -> str:
         return GoogleDriveImageUrlGenerator.generate_standard_img_url_v2(self.id)
