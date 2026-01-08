@@ -6,7 +6,7 @@ from pic_back.services import GoogleDriveDataFetcher, GoogleDriveFolderContentPa
 from pic_back.services.google_drive.folder_path_getter import ChainedGoogleDriveFolder, GoogleDriveFolderPathGetter
 from pic_back.settings import get_settings
 
-from .serializers.output.folder_content import GoogleDriveFolderContentOutputSerializer
+from .serializers.output import GoogleDriveFolderContentOutputSerializer
 
 settings = get_settings()
 router = APIRouter(prefix=f"{settings.global_api_prefix}/gdrive", tags=["gdrive"])
