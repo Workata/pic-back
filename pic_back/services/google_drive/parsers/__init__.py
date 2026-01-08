@@ -1,2 +1,2 @@
-from .general import GoogleDriveFolderContentDataParser
+from .general import GoogleDriveFolderContentParser
 from .image_ids import GoogleDriveImageIdsDataParser

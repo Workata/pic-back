@@ -1,7 +1,7 @@
 from pic_back.db.utils.images_db_operations import ImagesDbOperations
 from pic_back.models import Image
-from pic_back.models.google_drive_folder_content_parsed_data import GoogleDriveFolderContentParsedData
-from pic_back.services.google_drive.parsers import GoogleDriveFolderContentDataParser
+from pic_back.routers.gdrive.serializers.output import GoogleDriveFolderContentOutputSerializer
+from pic_back.services.google_drive.parsers import GoogleDriveFolderContentParser
 
 
 def test_general_google_data_parser():
@@ -16,8 +16,8 @@ def test_general_google_data_parser():
         "nextPageToken": None,
     }
 
-    res = GoogleDriveFolderContentDataParser().parse(data)
+    res = GoogleDriveFolderContentParser().parse(data)
 
-    assert type(res) is GoogleDriveFolderContentParsedData
+    assert type(res) is GoogleDriveFolderContentOutputSerializer
     assert len(res.images) == 2
     assert len(res.folders) == 1

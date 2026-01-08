@@ -4,7 +4,7 @@ from typing import Any, List, Optional, Protocol
 
 from tinydb import Query
 
-from pic_back.db.utils import TimestampDbOperations, TimestampNotFoundException
+from pic_back.db.utils.timestamps_db_operations import TimestampDbOperations, TimestampNotFoundException
 from pic_back.models import Coords, Timestamp
 
 
