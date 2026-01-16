@@ -3,6 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import Response
+from pydantic import HttpUrl
 from tinydb import Query
 
 from pic_back.db import CollectionName, CollectionProvider
@@ -18,9 +19,8 @@ from pic_back.settings import get_settings
 
 query = Query()
 settings = get_settings()
-# TODO verify router path "/"
-router_path = f"{settings.global_api_prefix}/categories"
-router = APIRouter(prefix=router_path, tags=["categories"])
+router_prefix = f"{settings.global_api_prefix}/categories"
+router = APIRouter(prefix=router_prefix, tags=["categories"])
 
 
 @router.get("", response_model=List[Category], status_code=status.HTTP_200_OK)
@@ -66,7 +66,6 @@ async def get_images_from_category(
     Get images belonging to given category (paginated)
 
     TODO move to images router
-    TODO page, page_size validation
     """
     if not CategoriesDbOperations.exists(category_name):
         raise CategoryNotFoundHTTPException(name=category_name)
@@ -84,11 +83,13 @@ async def get_images_from_category(
     ]
     images = [ImageToShowOutputSerializer(id=img["id"], name=img["name"], comment=img["comment"]) for img in images]
 
-    endpoint_url = f"{request.base_url}{router_path}/{category_name}"
+    base_url = str(request.base_url).strip("/")
+    _router_prefix = router_prefix.strip("/")
+    endpoint_url = f"{base_url}/{_router_prefix}/{category_name}"
     previous_page = page - 1 if page != 0 else None
-    previous_page_link = f"{endpoint_url}?page={previous_page}" if previous_page is not None else None
+    previous_page_link = HttpUrl(f"{endpoint_url}?page={previous_page}") if previous_page is not None else None
     next_page = page + 1 if page < total_number_of_pages - 1 else None
-    next_page_link = f"{endpoint_url}?page={next_page}" if next_page is not None else None
+    next_page_link = HttpUrl(f"{endpoint_url}?page={next_page}") if next_page is not None else None
     return ImagesFromCategoryOutputSerializer(
         images=images,
         previous_page_link=previous_page_link,
