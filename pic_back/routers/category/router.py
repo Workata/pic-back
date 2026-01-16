@@ -3,6 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import Response
+from pydantic import HttpUrl
 from tinydb import Query
 
 from pic_back.db import CollectionName, CollectionProvider
@@ -86,9 +87,9 @@ async def get_images_from_category(
     _router_prefix = router_prefix.strip("/")
     endpoint_url = f"{base_url}/{_router_prefix}/{category_name}"
     previous_page = page - 1 if page != 0 else None
-    previous_page_link = f"{endpoint_url}?page={previous_page}" if previous_page is not None else None
+    previous_page_link = HttpUrl(f"{endpoint_url}?page={previous_page}") if previous_page is not None else None
     next_page = page + 1 if page < total_number_of_pages - 1 else None
-    next_page_link = f"{endpoint_url}?page={next_page}" if next_page is not None else None
+    next_page_link = HttpUrl(f"{endpoint_url}?page={next_page}") if next_page is not None else None
     return ImagesFromCategoryOutputSerializer(
         images=images,
         previous_page_link=previous_page_link,
