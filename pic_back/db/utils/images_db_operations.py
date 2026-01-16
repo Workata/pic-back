@@ -1,3 +1,5 @@
+from typing import List
+
 from tinydb import Query, TinyDB
 
 from pic_back.db import CollectionName, CollectionProvider
@@ -28,6 +30,19 @@ class ImagesDbOperations(DbOperations):
             raise ImageExistsDbException
         images_db.insert(image.model_dump())
         return image
+
+    @classmethod
+    def bulk_create(cls, images: List[Image]) -> None:
+        """
+        1. Check if it's possible to create all images
+        2. Create all images
+        """
+        images_db = cls.get_db()
+        for image in images:
+            if images_db.get(query.id == image.id):
+                raise ImageExistsDbException(f"Bulk create failed! Image with ID: {image.id} exists!")
+        for image in images:
+            images_db.insert(image.model_dump())
 
     @classmethod
     def get(cls, img_id: str) -> Image:

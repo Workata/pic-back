@@ -85,7 +85,7 @@ def test_get_images_from_category_when_no_existing_category_should_return_404(cl
     assert res_data["detail"] == f"Category with name '{category_name}' not found."
 
 
-def test_get_images_from_category_should_return_(client):
+def test_get_images_from_category_should_return_200(client, settings):
     category_name = "cars"
     category = Category(name=category_name)
     image = Image(id="0123-0123", name="image.jpg", categories=[category])
@@ -97,6 +97,38 @@ def test_get_images_from_category_should_return_(client):
     res_data = res.json()
     assert res.status_code == status.HTTP_200_OK
     assert res_data["images"][0]["id"] == image.id
+    # test pagination
+    assert res_data["previousPage"] is None
+    assert res_data["previousPageLink"] is None
+    assert res_data["currentPage"] == 0
+    assert res_data["nextPage"] is None
+    assert res_data["nextPageLink"] is None
+    assert res_data["totalNumberOfPages"] == 1
+    assert res_data["totalNumberOfRecords"] == 1
+    assert res_data["pageSize"] == settings.default_page_size
+
+
+def test_get_images_from_category_with_paginated_response(client, settings):
+    category_name = "cars"
+    category = Category(name=category_name)
+    images = [Image(id=str(i), name=f"image_{i}.jpg", categories=[category]) for i in range(30)]
+    images_count = len(images)
+    CategoriesDbOperations.create(category)
+    ImagesDbOperations.bulk_create(images)
+
+    res = client.get(f"{categories_router_base_path}/{category_name}")
+
+    res_data = res.json()
+    assert res.status_code == status.HTTP_200_OK
+    # test pagination
+    assert res_data["previousPage"] is None
+    assert res_data["previousPageLink"] is None
+    assert res_data["currentPage"] == 0
+    assert res_data["nextPage"] == 1
+    assert res_data["nextPageLink"] == "http://testserver/api/v1/categories/cars?page=1"
+    assert res_data["totalNumberOfPages"] == 2
+    assert res_data["totalNumberOfRecords"] == images_count
+    assert res_data["pageSize"] == settings.default_page_size
 
 
 def test_update_category_endpoint_with_non_existing_category_and_authenticated_user_should_return_404(
