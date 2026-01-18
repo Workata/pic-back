@@ -27,4 +27,4 @@ async def generate_token(form_data: OAuth2PasswordRequestForm = Depends()) -> To
     access_token = create_access_token(
         data={"username": user["username"]}, expires_delta=timedelta(minutes=settings.access_token_lifetime_minutes)
     )
-    return TokenOutputSerializer(access_token=access_token, token_type="bearer")
+    return TokenOutputSerializer(access_token=access_token, token_type="bearer")  # nosec
