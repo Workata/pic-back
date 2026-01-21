@@ -1,7 +1,7 @@
 .PHONY: check
 check:
-	@echo "Running static checks via pre-commit..."
-	uv run pre-commit run --all-files
+	@echo "Running static checks via prek (pre-commit hook)..."
+	uv run prek run --all-files
 
 .PHONY: test
 test:

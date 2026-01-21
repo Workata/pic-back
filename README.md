@@ -38,9 +38,9 @@ Run unit tests and check coverage
 make test
 ```
 
-Optionally enable `pre-commit` hooks
+Optionally enable `prek` hooks
 ```sh
-uv run pre-commit install
+uv run prek install
 ```
 
 ### Containerization
