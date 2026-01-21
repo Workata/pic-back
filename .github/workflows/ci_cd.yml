@@ -22,7 +22,7 @@ jobs:
         run: docker build -f ./.github/workflows/Dockerfile . --tag pic-back-test-image
 
       - name: Run static checks via prek
-        run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run prek run --all
+        run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run prek run --all-files
 
       - name: Run unit tests
         run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run pytest --cov=pic_back
