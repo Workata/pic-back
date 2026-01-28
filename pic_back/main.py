@@ -1,37 +1,31 @@
+import asyncio
 import logging
 import logging.config
 import typing as t
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_utils.tasks import repeat_every
 
 from pic_back.routers import auth_router, category_router, gdrive_router, image_router, map_router
-from pic_back.services.backup import BackupMakerFactory
-from pic_back.services.google_drive import GoogleDriveDiskMapperFactory
-from pic_back.settings import LOGGING_CONFIG, EnvType, get_settings
+from pic_back.settings import LOGGING_CONFIG, get_settings
+from pic_back.tasks import tasks
 
-"""
-Define startup and shutdown logic if necessary
-https://fastapi.tiangolo.com/advanced/events/
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> t.Any:
-    await backup_task()
-    await map_disk_task()
-    # startup logic
+    """
+    https://fastapi.tiangolo.com/advanced/events/#lifespan-events
+    """
+    asyncio.gather(*[task() for task in tasks])
     yield
-    # shutdown logic
-
-app = FastAPI(lifespan=lifespan)
-"""
 
 
 logging.config.dictConfig(LOGGING_CONFIG)
 
 settings = get_settings()
 logger = logging.getLogger(name="main")
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
@@ -59,21 +53,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-DAY_SECONDS: int = 60 * 60 * 24
-
-
-@repeat_every(seconds=2 * DAY_SECONDS)
-async def backup_task() -> None:
-    if settings.environment != EnvType.PROD:
-        logger.info(f"Backup omitted - not prod. Current env: `{settings.environment.value}`")
-        return None
-    BackupMakerFactory.create().make()
-
-
-@repeat_every(seconds=DAY_SECONDS)
-async def map_disk_task() -> None:
-    if settings.environment != EnvType.PROD:
-        logger.info(f"Mapping disk omitted - not prod. Current env: `{settings.environment.value}`")
-        return None
-    GoogleDriveDiskMapperFactory.create().run()

@@ -6,6 +6,8 @@ from pathlib import Path
 from pydantic import AliasChoices, Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from pic_back.utils import TimeSeconds
+
 
 class EnvType(str, Enum):
     LOCAL = "local"
@@ -20,6 +22,9 @@ class Settings(BaseSettings):
     environment: EnvType = Field(default=EnvType.LOCAL, validation_alias=AliasChoices("environment", "env"))
     database_base_path: Path = Path("./data/database")
     global_api_prefix: str = "/api/v1"
+
+    backup_task_frequency_sec: int = TimeSeconds.DAY.value + TimeSeconds.HOUR.value
+    mapper_task_frequency_sec: int = TimeSeconds.HALF_DAY.value
 
     google_drive_backup_folder_id: str
     google_drive_upload_images_folder_id: str = "13RdM7JHyoDdwr2wdWINeDJQEveTUWtC0"
