@@ -20,10 +20,6 @@ def only_on_envs(envs: List[EnvType]) -> NoArgsNoReturnDecorator:
     """
 
     def decorator(func: NoArgsNoReturnAnyFuncT) -> NoArgsNoReturnAsyncFuncT:
-        """
-        Converts the decorated function into a repeated, periodically-called version of itself.
-        """
-
         @wraps(func)
         async def wrapped() -> None:
             if settings.environment not in envs:
