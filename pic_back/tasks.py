@@ -1,31 +1,33 @@
-import logging
-
-from fastapi_utils.tasks import repeat_every
-
 from pic_back.services.backup import BackupMakerFactory
 from pic_back.services.google_drive import GoogleDriveDiskMapperFactory
-from pic_back.settings import EnvType, get_settings
-from pic_back.utils.decorators import skip_first_call
+from pic_back.settings import get_settings
+from pic_back.shared import EnvType
+from pic_back.utils.decorators import only_on_envs, repeat_every, skip_first_call
 
 settings = get_settings()
-logger = logging.getLogger(name="tasks")
+
+"""
+Tasks are called at the beginning of the application lifespan and then repeated every X seconds.
+To skip the first call (application startup) use `skip_first_call` decorator.
+Tasks should accept no arguments and return nothing.
+
+> This design is not ideal so it might change.
+
+If you create a new task add it to the `tasks` list.
+"""
 
 
 @repeat_every(seconds=settings.backup_task_frequency_sec)  # type: ignore
 @skip_first_call
+@only_on_envs(envs=[EnvType.PROD])
 async def backup_task() -> None:
-    if settings.environment != EnvType.PROD:
-        logger.info(f"Backup omitted - not prod. Current env: `{settings.environment.value}`")
-        return None
     BackupMakerFactory.create().make()
 
 
 @repeat_every(seconds=settings.mapper_task_frequency_sec)  # type: ignore
 @skip_first_call
+@only_on_envs(envs=[EnvType.PROD])
 async def mapper_task() -> None:
-    if settings.environment != EnvType.PROD:
-        logger.info(f"Mapping disk omitted - not prod. Current env: `{settings.environment.value}`")
-        return None
     GoogleDriveDiskMapperFactory.create().run()
 
 

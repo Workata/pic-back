@@ -1,12 +1,11 @@
-from __future__ import annotations
-
+import logging
 from functools import wraps
 from typing import Awaitable, Callable, ParamSpec, TypeVar
 
-# TODO verify
-
 P = ParamSpec("P")
 R = TypeVar("R")
+
+logger = logging.getLogger(name="skip_first_call")
 
 
 def skip_first_call(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R | None]]:
@@ -23,6 +22,7 @@ def skip_first_call(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R 
 
         if not called:
             called = True
+            logger.info(f"Function {func.__name__} omitted - first call")
             return None  # skipped
 
         return await func(*args, **kwargs)

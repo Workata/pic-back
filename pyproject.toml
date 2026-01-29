@@ -1,13 +1,12 @@
 [project]
 name = "pic-back"
-version = "1.1.0"
+version = "1.2.0"
 description = "Backend for tomtol (pic-pages) application"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "bcrypt==5.0.0",
     "exif==1.6.1",
-    "fastapi-utils==0.8.0",
     "fastapi[standard]==0.121.0",
     "google-api-python-client==2.187.0",
     "google-auth-oauthlib==1.2.3",

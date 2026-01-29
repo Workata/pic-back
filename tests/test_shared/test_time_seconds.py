@@ -1,4 +1,4 @@
-from pic_back.utils import TimeSeconds
+from pic_back.shared import TimeSeconds
 
 
 def test_time_seconds_values():
