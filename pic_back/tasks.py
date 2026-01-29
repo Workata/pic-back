@@ -17,14 +17,14 @@ If you create a new task add it to the `tasks` list.
 """
 
 
-@repeat_every(seconds=settings.backup_task_frequency_sec)  # type: ignore
+@repeat_every(seconds=settings.backup_task_frequency_sec)
 @skip_first_call
 @only_on_envs(envs=[EnvType.PROD])
 async def backup_task() -> None:
     BackupMakerFactory.create().make()
 
 
-@repeat_every(seconds=settings.mapper_task_frequency_sec)  # type: ignore
+@repeat_every(seconds=settings.mapper_task_frequency_sec)
 @skip_first_call
 @only_on_envs(envs=[EnvType.PROD])
 async def mapper_task() -> None:

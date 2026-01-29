@@ -11,32 +11,9 @@ import logging
 import warnings
 from functools import wraps
 from traceback import format_exception
-from typing import Any, Callable, Coroutine, Union
 
-from starlette.concurrency import run_in_threadpool
-
-NoArgsNoReturnFuncT = Callable[[], None]
-NoArgsNoReturnAsyncFuncT = Callable[[], Coroutine[Any, Any, None]]
-ExcArgNoReturnFuncT = Callable[[Exception], None]
-ExcArgNoReturnAsyncFuncT = Callable[[Exception], Coroutine[Any, Any, None]]
-NoArgsNoReturnAnyFuncT = Union[NoArgsNoReturnFuncT, NoArgsNoReturnAsyncFuncT]
-ExcArgNoReturnAnyFuncT = Union[ExcArgNoReturnFuncT, ExcArgNoReturnAsyncFuncT]
-NoArgsNoReturnDecorator = Callable[[NoArgsNoReturnAnyFuncT], NoArgsNoReturnAsyncFuncT]
-
-
-async def _handle_func(func: NoArgsNoReturnAnyFuncT) -> None:
-    if asyncio.iscoroutinefunction(func):
-        await func()
-    else:
-        await run_in_threadpool(func)
-
-
-async def _handle_exc(exc: Exception, on_exception: ExcArgNoReturnAnyFuncT | None) -> None:
-    if on_exception:
-        if asyncio.iscoroutinefunction(on_exception):
-            await on_exception(exc)
-        else:
-            await run_in_threadpool(on_exception, exc)
+from .shared import handle_exc, handle_func
+from .types import ExcArgNoReturnAnyFuncT, NoArgsNoReturnAnyFuncT, NoArgsNoReturnAsyncFuncT, NoArgsNoReturnDecorator
 
 
 def repeat_every(
@@ -94,7 +71,7 @@ def repeat_every(
                 repetitions = 0
                 while max_repetitions is None or repetitions < max_repetitions:
                     try:
-                        await _handle_func(func)
+                        await handle_func(func)
 
                     except Exception as exc:
                         if logger is not None:
@@ -110,13 +87,13 @@ def repeat_every(
                                 DeprecationWarning,
                             )
                             raise exc
-                        await _handle_exc(exc, on_exception)
+                        await handle_exc(exc, on_exception)
 
                     repetitions += 1
                     await asyncio.sleep(seconds)
 
                 if on_complete:
-                    await _handle_func(on_complete)
+                    await handle_func(on_complete)
 
             asyncio.ensure_future(loop())
 
