@@ -1,30 +1,28 @@
-from __future__ import annotations
-
+import logging
 from functools import wraps
-from typing import Awaitable, Callable, ParamSpec, TypeVar
 
-# TODO verify
+from .shared import handle_func
+from .types import NoArgsNoReturnAnyFuncT, NoArgsNoReturnAsyncFuncT
 
-P = ParamSpec("P")
-R = TypeVar("R")
+logger = logging.getLogger(name="skip_first_call")
 
 
-def skip_first_call(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R | None]]:
+def skip_first_call(func: NoArgsNoReturnAnyFuncT) -> NoArgsNoReturnAsyncFuncT:
     """
     Decorator for async functions that skips the first call.
-    First call returns None, later calls run normally.
     """
 
     called: bool = False
 
     @wraps(func)
-    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R | None:
+    async def wrapped() -> None:
         nonlocal called
 
         if not called:
             called = True
-            return None  # skipped
+            logger.info(f"Function {func.__name__} omitted - first call")
+            return None
 
-        return await func(*args, **kwargs)
+        await handle_func(func)
 
-    return wrapper
+    return wrapped

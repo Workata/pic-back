@@ -1,21 +1,11 @@
 import tomllib
-from enum import Enum
 from functools import lru_cache
 from pathlib import Path
 
 from pydantic import AliasChoices, Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from pic_back.utils import TimeSeconds
-
-
-class EnvType(str, Enum):
-    LOCAL = "local"
-    DEV = "dev"
-    TEST = "test"
-    STAGING = "staging"
-    ACCEPTANCE = "acceptane"
-    PROD = "production"
+from pic_back.shared import EnvType, TimeSeconds
 
 
 class Settings(BaseSettings):
