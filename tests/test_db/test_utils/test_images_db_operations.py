@@ -65,3 +65,23 @@ def test_get_or_create_when_image_in_db(images_db):
 
     assert res == image
     assert len(images_db.all()) == 1
+
+
+def test_bulk_create_with_no_duplicates_and_clean_db(images_db):
+    images_to_create = [Image(id="123-123", name="image1.jpg"), Image(id="091-091", name="image2.jpg")]
+    assert len(images_db.all()) == 0
+
+    ImagesDbOperations.bulk_create(images_to_create)
+
+    assert len(images_db.all()) == 2
+
+
+def test_bulk_create_where_image_already_exists_in_db(images_db):
+    images_to_create = [Image(id="123-123", name="image1.jpg"), Image(id="091-091", name="image2.jpg")]
+    images_db.insert(images_to_create[0].model_dump())
+    assert len(images_db.all()) == 1
+
+    with pytest.raises(ImageExistsDbException):
+        ImagesDbOperations.bulk_create(images_to_create)
+
+    assert len(images_db.all()) == 1
