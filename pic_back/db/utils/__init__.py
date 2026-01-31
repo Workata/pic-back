@@ -1,5 +1,5 @@
 from .categories_db_operations import CategoriesDbOperations, CategoryExistsException, CategoryNotFoundException
 from .images_db_operations import ImageExistsDbException, ImageNotFoundDbException, ImagesDbOperations
 from .markers_db_operations import MarkerExistsException, MarkersDbOperations
-from .timestamps_db_operations import TimestampDbOperations, TimestampNotFoundException
+from .timestamps_db_operations import TimestampDbOperations, TimestampExistsException, TimestampNotFoundException
 from .users_db_operations import UserExistsException, UserNotFoundException, UsersDbOperations

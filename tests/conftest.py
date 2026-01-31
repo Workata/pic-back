@@ -79,6 +79,11 @@ def users_db() -> TinyDB:
 
 
 @pytest.fixture
+def timestamps_db() -> TinyDB:
+    return CollectionProvider.provide(CollectionName.TIMESTAMPS)
+
+
+@pytest.fixture
 def client() -> TestClient:
     return TestClient(app)
 
