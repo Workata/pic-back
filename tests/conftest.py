@@ -26,7 +26,7 @@ def settings() -> Settings:
 
 
 @pytest.fixture(scope="function", autouse=True)
-def clear_db(set_env):
+def clear_db(set_env_vars):
     """clear all test collections before executing a test function"""
     for collection_name in CollectionName:
         db = CollectionProvider.provide(collection_name)
