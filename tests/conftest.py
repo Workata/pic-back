@@ -15,7 +15,7 @@ from pic_back.utils.auth import create_user
 
 
 @pytest.fixture(scope="session", autouse=True)
-def set_env():
+def set_env_vars():
     load_dotenv(Path("./tests/.env.test"))
     get_settings.cache_clear()
 
