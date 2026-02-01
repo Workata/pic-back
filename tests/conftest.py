@@ -1,7 +1,8 @@
-import os
+from pathlib import Path
 from typing import Dict
 
 import pytest
+from dotenv import load_dotenv
 from fastapi.testclient import TestClient
 from tinydb import TinyDB, where
 
@@ -15,9 +16,13 @@ from pic_back.utils.auth import create_user
 
 @pytest.fixture(scope="session", autouse=True)
 def set_env():
-    """set test env vars"""
-    os.environ["DATABASE_BASE_PATH"] = "./tests/data/"
+    load_dotenv(Path("./tests/.env.test"))
     get_settings.cache_clear()
+
+
+@pytest.fixture
+def settings() -> Settings:
+    return get_settings()
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -86,8 +91,3 @@ def timestamps_db() -> TinyDB:
 @pytest.fixture
 def client() -> TestClient:
     return TestClient(app)
-
-
-@pytest.fixture
-def settings() -> Settings:
-    return get_settings()
