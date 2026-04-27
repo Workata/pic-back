@@ -1,8 +1,8 @@
 import asyncio
 import logging
 import logging.config
-import typing as t
 from contextlib import asynccontextmanager
+from typing import Any, Dict
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +13,7 @@ from pic_back.tasks import tasks
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> t.Any:
+async def lifespan(app: FastAPI) -> Any:
     """
     https://fastapi.tiangolo.com/advanced/events/#lifespan-events
     """
@@ -29,12 +29,12 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
-def healthcheck() -> t.Dict[str, str]:
+def healthcheck() -> Dict[str, str]:
     return {"Status": "OK!"}
 
 
 @app.get(f"{settings.global_api_prefix}/system/info")
-def system_info() -> t.Dict[str, str]:
+def system_info() -> Dict[str, str]:
     return {"version": settings.version}
 
 
