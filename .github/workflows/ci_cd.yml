@@ -14,6 +14,8 @@ jobs:
   # every branch
   checks:
     runs-on: ubuntu-latest
+    env:
+      EXECUTE_IN_CONTAINER: docker run --env-file ./tests/.env.test pic-back-test-image:latest
     steps:
       - name: Check out code
         uses: actions/checkout@v5
@@ -22,10 +24,10 @@ jobs:
         run: docker build -f ./.github/workflows/Dockerfile . --tag pic-back-test-image
 
       - name: Run static checks via prek
-        run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run prek run --all-files
+        run: $EXECUTE_IN_CONTAINER uv run prek run --all-files
 
       - name: Run unit tests
-        run: docker run --env-file ./.github/workflows/.env.test pic-back-test-image:latest uv run pytest --cov=pic_back
+        run: $EXECUTE_IN_CONTAINER uv run pytest --cov=pic_back
 
   # only main branch
   deploy:

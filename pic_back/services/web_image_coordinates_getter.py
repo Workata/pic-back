@@ -2,7 +2,7 @@ import io
 import logging
 import typing as t
 
-import httpx
+import requests
 from exif import Image
 
 from pic_back.models import Coords
@@ -25,7 +25,7 @@ class WebImageCoordinatesGetter:
         return coords
 
     def _get_img(self, img_url: str) -> Image:
-        res = httpx.get(img_url)
+        res = requests.get(img_url, timeout=60)
         return Image(io.BytesIO(res.content))
 
     def _get_image_coordinates(self, img: Image) -> t.Optional[Coords]:

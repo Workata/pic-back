@@ -1,5 +1,3 @@
-import json
-
 from fastapi import status
 
 from pic_back.db.utils import CategoriesDbOperations, ImagesDbOperations
@@ -34,7 +32,7 @@ def test_get_or_create_image_endpoint_with_exising_image_endpoint_should_return_
     name = "image.jpg"
     image = ImagesDbOperations.create(Image(id=img_id, name=name))
 
-    res = client.post(images_router_base_path, data=image.model_dump_json(), headers=auth_headers)
+    res = client.post(images_router_base_path, json=image.model_dump(), headers=auth_headers)
 
     res_data = res.json()
     assert res.status_code == status.HTTP_200_OK
@@ -58,7 +56,7 @@ def test_aupdate_image_categories_endpoint_with_authenticated_user_should_return
 
     res = client.patch(
         f"{images_router_base_path}/{img_id}/categories",
-        data=json.dumps([category_name]),
+        json=[category_name],
         headers=auth_headers,
     )
 
@@ -72,7 +70,7 @@ def test_update_image_categories_endpoint_with_non_existing_image_should_return_
 
     res = client.patch(
         f"{images_router_base_path}/{img_id}/categories",
-        data=json.dumps([category_name]),
+        json=[category_name],
         headers=auth_headers,
     )
 
@@ -105,7 +103,7 @@ def test_update_image_comment_endpoint_with_non_existing_image_should_return_404
 
     res = client.patch(
         f"{images_router_base_path}/{img_id}/comment",
-        data=json.dumps({"comment": "thats a bird"}),
+        json={"comment": "thats a bird"},
         headers=auth_headers,
     )
 
@@ -119,7 +117,7 @@ def test_update_image_comment_endpoint_with_existing_image_should_return_404(cli
 
     res = client.patch(
         f"{images_router_base_path}/{img_id}/comment",
-        data=json.dumps({"comment": new_comment}),
+        json={"comment": new_comment},
         headers=auth_headers,
     )
     updated_img = ImagesDbOperations.get(img_id=img_id)

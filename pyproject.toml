@@ -1,36 +1,42 @@
 [project]
 name = "pic-back"
-version = "1.2.0"
+version = "2.0.0"
 description = "Backend for tomtol (pic-pages) application"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "bcrypt==5.0.0",
     "exif==1.6.1",
-    "fastapi[standard]==0.121.0",
-    "google-api-python-client==2.187.0",
-    "google-auth-oauthlib==1.2.3",
-    "httpx>=0.28.1",
-    "pydantic==2.12.4",
-    "pydantic-settings==2.11.0",
+    "fastapi==0.136.1",
+    "google-api-python-client==2.194.0",
+    "google-auth-oauthlib==1.3.1",
+    "pydantic==2.13.3",
+    "pydantic-settings==2.14.0",
     "python-jose==3.5.0",
+    "python-multipart==0.0.26",
+    "requests==2.33.1",
     "tinydb==4.8.2",
-    "typing-inspect==0.9.0",
     "urllib3==2.6.3",
+    "uvicorn==0.46.0",
 ]
 
 [dependency-groups]
 dev = [
     "bandit[toml]==1.9.2",
     "freezegun==1.5.5",
+    "httpx==0.28.1",
     "mypy==1.18.2",
     "prek>=0.2.30",
     "pytest==8.4.2",
     "pytest-asyncio==1.3.0",
     "pytest-cov==7.0.0",
+    "python-dotenv==1.2.1",
     "ruff==0.14.4",
+    "types-requests>=2.33.0.20260408",
 ]
 
+[tool.uv]
+exclude-newer = "1 week"
 
 [tool.mypy]
 

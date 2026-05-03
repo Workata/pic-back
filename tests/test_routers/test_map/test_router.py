@@ -11,8 +11,8 @@ images_router_base_path = "/api/v1/map"
 
 def test_list_markers_endpoint_should_return_200(client):
     markers = [
-        Marker(url="www.dummy.com", coords=Coords(latitude="4.1", longitude="3.2")),
-        Marker(url="www.dummy2.com", coords=Coords(latitude="3.5", longitude="1.7")),
+        Marker(url="www.dummy.com", coords=Coords(latitude=4.1, longitude=3.2)),
+        Marker(url="www.dummy2.com", coords=Coords(latitude=3.5, longitude=1.7)),
     ]
     [MarkersDbOperations.create(marker) for marker in markers]
     expected_response = [
@@ -41,9 +41,9 @@ def test_list_markers_endpoint_should_return_200(client):
 
 
 def test_create_marker_endpoint_should_return_201(client, auth_headers):
-    marker = Marker(url="www.dummy.com", coords=Coords(latitude="4.1", longitude="3.2"))
+    marker = Marker(url="www.dummy.com", coords=Coords(latitude=4.1, longitude=3.2))
 
-    res = client.post(f"{images_router_base_path}/marker", data=marker.model_dump_json(), headers=auth_headers)
+    res = client.post(f"{images_router_base_path}/marker", json=marker.model_dump(), headers=auth_headers)
 
     res_data = res.json()
     assert res.status_code == status.HTTP_201_CREATED
@@ -54,10 +54,10 @@ def test_create_marker_endpoint_should_return_201(client, auth_headers):
 
 
 def test_create_marker_endpoint_should_return_400_when_it_already_exists(client, auth_headers):
-    marker = Marker(url="www.dummy.com", coords=Coords(latitude="4.1", longitude="3.2"))
+    marker = Marker(url="www.dummy.com", coords=Coords(latitude=4.1, longitude=3.2))
     MarkersDbOperations.create(marker)
 
-    res = client.post(f"{images_router_base_path}/marker", data=marker.model_dump_json(), headers=auth_headers)
+    res = client.post(f"{images_router_base_path}/marker", json=marker.model_dump(), headers=auth_headers)
 
     res_data = res.json()
     assert res.status_code == status.HTTP_400_BAD_REQUEST

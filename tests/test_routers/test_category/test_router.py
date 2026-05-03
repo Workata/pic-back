@@ -27,7 +27,7 @@ def test_create_category_endpoint_with_authenticated_user_should_create_category
     category_to_create = Category(name=category_name)
     assert CategoriesDbOperations.exists(category_name=category_name) is False
 
-    res = client.post(categories_router_base_path, data=category_to_create.model_dump_json(), headers=auth_headers)
+    res = client.post(categories_router_base_path, json=category_to_create.model_dump(), headers=auth_headers)
 
     res_data = res.json()
     assert res.status_code == status.HTTP_201_CREATED
@@ -40,7 +40,7 @@ def test_create_category_endpoint_but_it_exists_with_authenticated_user_should_r
     category_to_create = Category(name=category_name)
     CategoriesDbOperations.create(category_to_create)
 
-    res = client.post(categories_router_base_path, data=category_to_create.model_dump_json(), headers=auth_headers)
+    res = client.post(categories_router_base_path, json=category_to_create.model_dump(), headers=auth_headers)
 
     res_data = res.json()
     assert res.status_code == status.HTTP_400_BAD_REQUEST
@@ -141,7 +141,7 @@ def test_update_category_endpoint_with_non_existing_category_and_authenticated_u
     ImagesDbOperations.create(image)
     update_category_input = UpdateCategoryInputSerializer(old_name=old_category_name, new_name=new_category_name)
 
-    res = client.patch(categories_router_base_path, data=update_category_input.model_dump_json(), headers=auth_headers)
+    res = client.patch(categories_router_base_path, json=update_category_input.model_dump(), headers=auth_headers)
 
     assert res.status_code == status.HTTP_404_NOT_FOUND
 
@@ -155,7 +155,7 @@ def test_update_category_endpoint_with_existing_category_and_authenticated_user_
     ImagesDbOperations.create(image)
     update_category_input = UpdateCategoryInputSerializer(old_name=old_category_name, new_name=new_category_name)
 
-    res = client.patch(categories_router_base_path, data=update_category_input.model_dump_json(), headers=auth_headers)
+    res = client.patch(categories_router_base_path, json=update_category_input.model_dump(), headers=auth_headers)
 
     assert res.status_code == status.HTTP_204_NO_CONTENT
     assert CategoriesDbOperations.exists(old_category_name) is False

@@ -17,5 +17,5 @@ run:
 .PHONY: run-docker
 run-docker:
 	@echo "Running containerized fast api application..."
-	docker build . --tag pic-back-image
-	docker run pic-back-image
+	docker compose build fastapi
+	docker compose up fastapi
