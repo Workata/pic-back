@@ -5,6 +5,7 @@ description = "Backend for tomtol (pic-pages) application"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "apscheduler==3.11.2",
     "bcrypt==5.0.0",
     "exif==1.6.1",
     "fastapi==0.136.1",
