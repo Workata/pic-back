@@ -1,8 +1,8 @@
-FROM python:3.14.0-slim-trixie
+FROM python:3.14.4-alpine3.23
 
 # * install uv
 # * https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
-COPY --from=ghcr.io/astral-sh/uv:0.9.8 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.11.8 /uv /uvx /bin/
 
 # install Git to run pre-commit hooks
 RUN apt-get update && \
